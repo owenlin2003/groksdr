@@ -92,35 +92,68 @@ export default function ActivityTimeline({ activities }: ActivityTimelineProps) 
                             <summary className="text-base text-blue-600 cursor-pointer hover:text-blue-800 font-medium">
                               ▼ View Grok Response
                             </summary>
-                            <div className="mt-3 p-4 bg-gray-50 rounded-lg border border-gray-200">
-                              {activity.modelUsed && (
-                                <div className="mb-3">
-                                  <span className="text-sm font-semibold text-gray-700">Model: </span>
-                                  <span className="text-sm text-gray-900">{activity.modelUsed}</span>
-                                </div>
-                              )}
-                              {response.score !== undefined && (
-                                <div className="mb-3">
-                                  <span className="text-sm font-semibold text-gray-700">Score: </span>
-                                  <span className="text-lg font-bold text-gray-900">{response.score}/100</span>
-                                </div>
-                              )}
-                              {response.qualificationStatus && (
-                                <div className="mb-3">
-                                  <span className="text-sm font-semibold text-gray-700">Status: </span>
-                                  <span className="text-sm text-gray-900 capitalize">{response.qualificationStatus}</span>
-                                </div>
-                              )}
+                            <div className="mt-3 p-4 bg-blue-50 rounded-lg border border-blue-200">
+                              <div className="grid grid-cols-2 gap-4 mb-4 pb-4 border-b border-blue-200">
+                                {activity.modelUsed && (
+                                  <div>
+                                    <span className="text-xs font-semibold text-blue-700 uppercase tracking-wide">Model</span>
+                                    <div className="text-base font-medium text-blue-900 mt-1">{activity.modelUsed}</div>
+                                  </div>
+                                )}
+                                {response.score !== undefined && (
+                                  <div>
+                                    <span className="text-xs font-semibold text-blue-700 uppercase tracking-wide">Score</span>
+                                    <div className="text-2xl font-bold text-blue-900 mt-1">{response.score}/100</div>
+                                  </div>
+                                )}
+                                {response.qualificationStatus && (
+                                  <div>
+                                    <span className="text-xs font-semibold text-blue-700 uppercase tracking-wide">Status</span>
+                                    <div className="text-base font-medium text-blue-900 mt-1 capitalize">{response.qualificationStatus}</div>
+                                  </div>
+                                )}
+                              </div>
                               {response.reasoning && (
-                                <div className="mt-3">
-                                  <div className="text-sm font-semibold text-gray-700 mb-2">Reasoning:</div>
-                                  <div className="text-base text-gray-800 whitespace-pre-wrap leading-relaxed">
+                                <div>
+                                  <div className="text-sm font-semibold text-blue-900 mb-2">Reasoning:</div>
+                                  <div className="text-base text-blue-800 whitespace-pre-wrap leading-relaxed bg-white p-3 rounded border border-blue-100">
                                     {response.reasoning}
                                   </div>
                                 </div>
                               )}
+                              {response.breakdown && (
+                                <div className="mt-4 pt-4 border-t border-blue-200">
+                                  <div className="text-sm font-semibold text-blue-900 mb-2">Score Breakdown:</div>
+                                  <div className="grid grid-cols-2 gap-2 text-sm">
+                                    {response.breakdown.companySize !== undefined && (
+                                      <div className="bg-white p-2 rounded border border-blue-100">
+                                        <span className="text-blue-700">Company Size: </span>
+                                        <span className="font-semibold text-blue-900">{response.breakdown.companySize}</span>
+                                      </div>
+                                    )}
+                                    {response.breakdown.industryMatch !== undefined && (
+                                      <div className="bg-white p-2 rounded border border-blue-100">
+                                        <span className="text-blue-700">Industry Match: </span>
+                                        <span className="font-semibold text-blue-900">{response.breakdown.industryMatch}</span>
+                                      </div>
+                                    )}
+                                    {response.breakdown.budgetSignals !== undefined && (
+                                      <div className="bg-white p-2 rounded border border-blue-100">
+                                        <span className="text-blue-700">Budget Signals: </span>
+                                        <span className="font-semibold text-blue-900">{response.breakdown.budgetSignals}</span>
+                                      </div>
+                                    )}
+                                    {response.breakdown.decisionMaker !== undefined && (
+                                      <div className="bg-white p-2 rounded border border-blue-100">
+                                        <span className="text-blue-700">Decision Maker: </span>
+                                        <span className="font-semibold text-blue-900">{response.breakdown.decisionMaker}</span>
+                                      </div>
+                                    )}
+                                  </div>
+                                </div>
+                              )}
                               {!response.reasoning && !response.score && (
-                                <div className="text-sm text-gray-600">
+                                <div className="text-sm text-blue-600">
                                   <pre className="whitespace-pre-wrap">
                                     {JSON.stringify(response, null, 2)}
                                   </pre>
@@ -142,30 +175,72 @@ export default function ActivityTimeline({ activities }: ActivityTimelineProps) 
                         )
                       }
                     })()}
-                    {activity.input && (
-                      <details className="mt-2">
-                        <summary className="text-sm text-gray-600 cursor-pointer hover:text-gray-800">
-                          View Input
-                        </summary>
-                        <div className="mt-2 p-3 bg-gray-50 rounded text-xs">
-                          <pre className="whitespace-pre-wrap">
-                            {JSON.stringify(JSON.parse(activity.input), null, 2)}
-                          </pre>
-                        </div>
-                      </details>
-                    )}
-                    {activity.output && (
-                      <details className="mt-2">
-                        <summary className="text-sm text-gray-600 cursor-pointer hover:text-gray-800">
-                          View Output
-                        </summary>
-                        <div className="mt-2 p-3 bg-gray-50 rounded text-xs">
-                          <pre className="whitespace-pre-wrap">
-                            {JSON.stringify(JSON.parse(activity.output), null, 2)}
-                          </pre>
-                        </div>
-                      </details>
-                    )}
+                    {activity.input && (() => {
+                      try {
+                        const input = JSON.parse(activity.input)
+                        return (
+                          <details className="mt-2">
+                            <summary className="text-sm text-gray-600 cursor-pointer hover:text-gray-800">
+                              View Input Details
+                            </summary>
+                            <div className="mt-2 p-3 bg-gray-50 rounded-lg border border-gray-200 text-sm">
+                              {input.leadData && (
+                                <div className="mb-3">
+                                  <div className="font-semibold text-gray-700 mb-1">Lead Information:</div>
+                                  <div className="text-gray-800 space-y-1 ml-2">
+                                    {input.leadData.name && <div>Name: {input.leadData.name}</div>}
+                                    {input.leadData.email && <div>Email: {input.leadData.email}</div>}
+                                    {input.leadData.company && <div>Company: {input.leadData.company}</div>}
+                                    {input.leadData.notes && <div>Notes: {input.leadData.notes}</div>}
+                                  </div>
+                                </div>
+                              )}
+                              {input.criteria && (
+                                <div>
+                                  <div className="font-semibold text-gray-700 mb-1">Scoring Criteria:</div>
+                                  <div className="text-gray-800 space-y-1 ml-2">
+                                    <div>Company Size: {Math.round((input.criteria.companySizeWeight || 1.0) * 5)}/5</div>
+                                    <div>Budget Signals: {Math.round((input.criteria.budgetSignalsWeight || 1.0) * 5)}/5</div>
+                                    <div>Decision Maker: {Math.round((input.criteria.decisionMakerWeight || 1.0) * 5)}/5</div>
+                                    <div>Industry Match: {Math.round((input.criteria.industryMatchWeight || 1.0) * 5)}/5</div>
+                                  </div>
+                                </div>
+                              )}
+                            </div>
+                          </details>
+                        )
+                      } catch (e) {
+                        return null
+                      }
+                    })()}
+                    {activity.output && (() => {
+                      try {
+                        const output = JSON.parse(activity.output)
+                        return (
+                          <details className="mt-2">
+                            <summary className="text-sm text-gray-600 cursor-pointer hover:text-gray-800">
+                              View Output Summary
+                            </summary>
+                            <div className="mt-2 p-3 bg-gray-50 rounded-lg border border-gray-200 text-sm">
+                              {output.score !== undefined && (
+                                <div className="mb-2">
+                                  <span className="font-semibold text-gray-700">Final Score: </span>
+                                  <span className="text-lg font-bold text-gray-900">{output.score}/100</span>
+                                </div>
+                              )}
+                              {output.status && (
+                                <div>
+                                  <span className="font-semibold text-gray-700">Status: </span>
+                                  <span className="text-gray-800 capitalize">{output.status}</span>
+                                </div>
+                              )}
+                            </div>
+                          </details>
+                        )
+                      } catch (e) {
+                        return null
+                      }
+                    })()}
                   </div>
                 </div>
               </div>
