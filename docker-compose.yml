@@ -12,8 +12,7 @@ services:
       - DATABASE_URL=file:./prisma/dev.db
       - GROK_API_KEY=${GROK_API_KEY}
     volumes:
-      - ./prisma/dev.db:/app/prisma/dev.db
-      - ./prisma/migrations:/app/prisma/migrations
+      - ./prisma:/app/prisma
     restart: unless-stopped
     healthcheck:
       test: ["CMD", "wget", "--quiet", "--tries=1", "--spider", "http://localhost:3000"]
