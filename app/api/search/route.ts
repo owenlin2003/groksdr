@@ -44,6 +44,20 @@ export async function GET(request: NextRequest) {
     // Build search conditions based on filter
     const searchConditions: any[] = []
 
+    // Always search name and email (most common searches)
+    searchConditions.push({
+      name: {
+        contains: searchTerm,
+        mode: 'insensitive' as const,
+      },
+    })
+    searchConditions.push({
+      email: {
+        contains: searchTerm,
+        mode: 'insensitive' as const,
+      },
+    })
+
     if (!filter || filter === 'all' || filter === 'company') {
       searchConditions.push({
         company: {
@@ -56,12 +70,6 @@ export async function GET(request: NextRequest) {
     if (!filter || filter === 'all' || filter === 'notes') {
       searchConditions.push({
         notes: {
-          contains: searchTerm,
-          mode: 'insensitive' as const,
-        },
-      })
-      searchConditions.push({
-        name: {
           contains: searchTerm,
           mode: 'insensitive' as const,
         },
