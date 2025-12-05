@@ -1,111 +1,87 @@
 # Grok SDR Demo
 
-> **Built in 4 hours to demonstrate Grok's power for sales teams** 🚀
+A production-ready Sales Development Representative system powered by Grok AI. Built to demonstrate how AI can enhance sales prospecting workflows through intelligent lead qualification, personalized outreach generation, and automated pipeline management.
 
-A production-ready Sales Development Representative system powered by Grok AI. This application showcases intelligent lead qualification, personalized outreach generation, and automated pipeline management—all designed to make your sales team more effective, not more technical.
+## What This Does
 
-## 🎯 What This Does
+Sales teams deal with dozens of leads daily. The challenge is knowing which ones deserve attention, what to say to them, and where they are in the sales process. This system addresses those questions by using Grok AI to evaluate leads consistently, generate personalized messages, and track progress through a visual pipeline.
 
-Imagine you're a sales rep juggling dozens of leads. You need to know: *Which ones are worth your time? What should I say to them? Where are they in my pipeline?* 
+The interface is designed for sales professionals, not developers. Every screen prioritizes clarity and actionability over technical complexity.
 
-Grok SDR answers all of that. It's like having an AI assistant that never sleeps, evaluates every lead with the same criteria you would (if you had time), and writes personalized messages that actually sound human.
+## Key Features
 
-**Built for sales reps, not engineers.** Every screen is designed so you can focus on selling, not figuring out how to use software.
+### Grok API Integration
 
-## ✨ Key Features
+The system uses Grok's API as its core intelligence layer. All AI-powered features rely on Grok for processing, with optimized prompts specifically tuned for sales use cases. The implementation supports multiple Grok model variants (grok-3, grok-4-fast-reasoning, grok-4-fast-non-reasoning) so you can compare performance and choose what works best.
 
-### 🤖 Grok API Integration
-- **Core intelligence layer** using Grok's API for all AI-powered features
-- **Optimized prompt engineering** specifically tuned for sales use cases
-- **Multiple model support**: Compare grok-3, grok-4-fast-reasoning, and grok-4-fast-non-reasoning
-- **Comprehensive error handling** so you never lose work when something goes wrong
-- **Response validation** ensures Grok's answers are always in the right format
+Error handling is built in at every level. API failures are caught, logged, and presented with clear messages. Response validation ensures Grok's output matches expected formats before it reaches the UI.
 
-### 📊 Model Evaluation Framework
-- **Systematic comparison** of Grok model variants to find what works best for your leads
-- **Evaluation dataset** with diverse lead scenarios (enterprise, startup, mid-market, edge cases)
-- **Real-time metrics**: Accuracy, response speed, reliability (consistency), and lead quality scores
-- **Performance dashboard** that shows you which model to use—no guessing
-- **Fast evaluation**: Complete in under 15 seconds for quick demos
-- **Recommendations** based on actual performance data, not opinions
+### Model Evaluation Framework
 
-**Why this matters:** Not all AI models are created equal. This framework helps you pick the right Grok model for your specific sales process.
+Not all AI models perform the same way. This framework lets you systematically compare Grok variants to see which one works best for your specific sales process.
 
-### 🎯 Lead Qualification & Management
+The evaluation system includes a diverse dataset with various lead scenarios—enterprise clients, startups, mid-market companies, and edge cases. It measures accuracy, response speed, reliability (consistency across runs), and lead quality scores. Results appear in a dashboard that shows which model to use, with recommendations based on actual performance data rather than assumptions.
 
-**AI-Powered Scoring**
-- Grok evaluates each lead and gives you a score from 0-100
-- Scores are based on: Company Size, Industry Match, Budget Signals, and Decision Maker Title
-- **Customizable weights**: Want to prioritize budget over company size? Adjust the sliders (1-5 scale) and re-score instantly
-- **Score breakdown** shows exactly why a lead scored what it did
-- **Re-scoring**: Change your criteria? Re-score all leads with one click
+Evaluations complete in under 15 seconds for quick demos, using a focused dataset of high-value and low-fit leads.
 
-**Pipeline Management**
-- **Visual Kanban board** showing all your leads across stages
-- **Automated progression**: Leads automatically move through stages based on scores and activities
-- **Collapsible stages**: Keep "Closed" collapsed so you focus on active deals
-- **Activity timeline**: See everything that's happened with a lead—qualifications, messages, stage changes
+### Lead Qualification and Management
 
-**Smart Features for Sales Reps**
-- **Last activity timestamp**: See when you last touched a lead ("Qualified 2 hours ago")
-- **Score trends**: Know if a lead is heating up (↑ +15) or cooling down (↓ -8)
-- **Next action hints**: Get suggestions like "Schedule demo call" or "⚠️ No activity in 7 days - follow up"
-- **CSV export**: Export all your leads with one click for use in other tools
+AI-Powered Scoring
 
-### 💬 Personalized Messaging
+Each lead receives a score from 0-100 based on four factors: Company Size, Industry Match, Budget Signals, and Decision Maker Title. The scoring weights are customizable. If budget matters more than company size for your process, adjust the sliders on a 1-5 scale and re-score instantly.
 
-**Context-Aware Outreach**
-- Grok generates personalized subject lines and email bodies based on:
-  - Lead's company size and industry
-  - Their role and decision-making authority
-  - Previous interactions (if any)
-  - Your notes and metadata
-- **Follow-up suggestions**: Get actionable next steps for each message
-- **Tone matching**: Professional for enterprise, casual for startups
-- **Activity logging**: Every message is tracked so you know what you've sent
+Every qualification includes a detailed breakdown showing why a lead scored what it did. This transparency helps sales reps understand the reasoning and build trust in the system.
 
-**Why this works:** Generic emails get deleted. Personalized ones get responses. Grok reads between the lines of your lead data to write messages that actually resonate.
+Pipeline Management
 
-### 🔍 Data Management
+The pipeline view shows all leads organized by stage in a Kanban-style board. Leads automatically progress through stages based on scores and activities—for example, sending a message moves a lead from "New" to "Contacted." The Closed stage is collapsed by default to keep focus on active deals.
 
-**Comprehensive Search**
-- **Real-time search** as you type (no need to click a button)
-- Search across: Names, emails, companies, notes, and activity history
-- **Stage filtering**: See only leads in "Qualified" or "Meeting Scheduled"
-- **Smart sorting**: By score, name, company, or date
+Every action is logged in an activity timeline. You can see when a lead was qualified, what messages were sent, when stages changed, and any notes added. This creates a complete audit trail.
 
-**Database & Storage**
-- SQLite database with Prisma ORM for reliable data storage
-- **Full CRUD operations**: Create, read, update, delete leads with validation
-- **Activity history**: Complete audit trail of every action
-- **Indexed queries** for fast performance even with hundreds of leads
+Smart Features
 
-### 🎨 User Interface
+The leads list shows last activity timestamps ("Qualified 2 hours ago"), score trends (up arrows for increases, down for decreases), and next action hints ("Schedule demo call" or warnings about inactive leads). These features help sales reps prioritize their time.
 
-**Designed for Sales Teams**
-- **Minimalist design**: No clutter, just what you need
-- **Intuitive navigation**: Leads, Pipeline, Evaluation—three main sections, easy to understand
-- **Responsive**: Works on desktop, tablet, or laptop
-- **Fast loading**: Optimized for quick interactions
-- **Error handling**: Clear messages when something goes wrong, not technical jargon
+CSV export is available with one click, pulling all lead data into a format that works with other sales tools.
 
-**Key Pages:**
-- **Leads Page**: List view with search, filtering, sorting, and CSV export
-- **Lead Detail**: Full lead information, qualification, messaging, stage changes, and activity timeline
-- **Pipeline**: Visual Kanban board showing leads across stages
-- **Evaluation**: Model comparison dashboard with performance metrics
+### Personalized Messaging
 
-## 🏗️ Technical Architecture
+Generic emails get deleted. Personalized ones get responses. The messaging system uses Grok to generate subject lines and email bodies based on lead data—company size, industry, role, previous interactions, and your notes.
+
+Each message includes follow-up suggestions and matches tone to context (professional for enterprise, casual for startups). All messages are automatically logged in the activity timeline so you know what you've sent and when.
+
+### Data Management
+
+Search works in real time as you type, with no button clicking required. It searches across names, emails, companies, notes, and activity history. Stage filtering lets you narrow to specific pipeline stages, and sorting options include score, name, company, and date.
+
+The system uses SQLite with Prisma ORM for data storage. All CRUD operations include validation, and database queries are indexed for performance. The activity history provides a complete audit trail of every action taken.
+
+### User Interface
+
+The interface follows a minimalist design philosophy. Navigation is straightforward: Leads, Pipeline, and Evaluation are the three main sections. The design is responsive and optimized for quick interactions.
+
+Error messages are written in plain language, not technical jargon. When something goes wrong, you'll see what happened and what to do about it.
+
+Key Pages
+
+- Leads Page: List view with search, filtering, sorting, and CSV export
+- Lead Detail: Full lead information, qualification controls, message generation, stage management, and activity timeline
+- Pipeline: Visual Kanban board showing leads across stages
+- Evaluation: Model comparison dashboard with performance metrics
+
+## Technical Architecture
 
 ### Stack
-- **Frontend**: Next.js 16 (App Router), React 19, TypeScript, Tailwind CSS
-- **Backend**: Next.js API Routes with Prisma ORM
-- **Database**: SQLite (perfect for demos and small teams)
-- **AI**: Grok API (xAI) with support for multiple model variants
-- **Testing**: Vitest for unit tests
-- **Deployment**: Docker & Docker Compose for easy setup
+
+- Frontend: Next.js 16 (App Router), React 19, TypeScript, Tailwind CSS
+- Backend: Next.js API Routes with Prisma ORM
+- Database: SQLite
+- AI: Grok API (xAI) with support for multiple model variants
+- Testing: Vitest for unit tests
+- Deployment: Docker and Docker Compose
 
 ### Project Structure
+
 ```
 grok-sdr-demo/
 ├── app/                    # Next.js app directory
@@ -131,8 +107,8 @@ grok-sdr-demo/
 │   │   └── messaging.ts
 │   ├── evaluation/       # Evaluation framework
 │   │   ├── dataset.ts   # Test dataset
-│   │   ├── runner.ts     # Evaluation execution
-│   │   └── metrics.ts    # Metrics calculation
+│   │   ├── runner.ts    # Evaluation execution
+│   │   └── metrics.ts   # Metrics calculation
 │   └── automation/       # Auto-progression rules
 ├── prisma/               # Database schema and migrations
 │   ├── schema.prisma
@@ -142,90 +118,80 @@ grok-sdr-demo/
 
 ### Key Components
 
-**Grok API Client** (`lib/grok.ts`)
-- Centralized client with error handling and retry logic
-- Model selection support (grok-3, grok-4-fast-reasoning, grok-4-fast-non-reasoning)
-- Response validation with Zod schemas
-- Handles API errors gracefully
+Grok API Client (lib/grok.ts)
 
-**Prompt Engineering** (`lib/prompts/`)
-- **Qualification prompts**: Dynamic prompts that adapt to custom scoring criteria
-- **Messaging prompts**: Context-aware prompts that use lead history
-- Structured response parsing with validation
-- Optimized for sales use cases
+Centralized client handles all API communication with error handling and retry logic. Supports model selection across grok-3, grok-4-fast-reasoning, and grok-4-fast-non-reasoning. Response validation uses Zod schemas to ensure data integrity.
 
-**Evaluation Framework** (`lib/evaluation/`)
-- Diverse test dataset with 10+ lead scenarios
-- Batch evaluation runner for comparing models
-- Metrics calculation: accuracy, response time, consistency
-- Recommendations engine for prompt iteration
+Prompt Engineering (lib/prompts/)
 
-**Automation** (`lib/automation/`)
-- Auto-progression rules based on scores and activities
-- Activity-based triggers (message sent → auto-progress to "Contacted")
-- Configurable thresholds
+Qualification prompts adapt dynamically to custom scoring criteria. Messaging prompts use lead history and context to generate relevant content. All prompts are structured to produce consistent, parseable responses.
 
-## 🚀 Quick Start
+Evaluation Framework (lib/evaluation/)
+
+The evaluation system includes a diverse test dataset with multiple lead scenarios. The runner executes batch evaluations across models, and the metrics calculator tracks accuracy, response time, and consistency. A recommendations engine suggests prompt improvements based on results.
+
+Automation (lib/automation/)
+
+Auto-progression rules move leads through pipeline stages based on scores and activities. Rules are configurable and trigger on specific events like message generation or qualification completion.
+
+## Quick Start
 
 ### Prerequisites
+
 - Node.js 18 or higher
 - npm or yarn
-- Grok API key from [console.x.ai](https://console.x.ai)
+- Grok API key from console.x.ai
 
 ### Local Development
 
-1. **Clone and install:**
+1. Clone and install:
 ```bash
 git clone <repository-url>
 cd grok-sdr-demo
 npm install
 ```
 
-2. **Set up environment variables:**
+2. Set up environment variables:
 Create a `.env.local` file in the project root:
 ```bash
 GROK_API_KEY=your_grok_api_key_here
 DATABASE_URL="file:./prisma/dev.db"
 ```
 
-3. **Initialize the database:**
+3. Initialize the database:
 ```bash
 npx prisma migrate dev
 npx prisma generate
 npm run db:seed
 ```
 
-4. **Start the development server:**
+4. Start the development server:
 ```bash
 npm run dev
 ```
 
-5. **Open the application:**
-Navigate to [http://localhost:3000](http://localhost:3000)
+5. Open the application:
+Navigate to http://localhost:3000
 
-### Docker Deployment (Recommended)
+### Docker Deployment
 
-**Why Docker?** One command to get everything running. No Node.js version conflicts, no dependency issues, no "works on my machine" problems.
+Docker simplifies setup by eliminating Node.js version conflicts and dependency issues. One command gets everything running.
 
-1. **Set up environment:**
+1. Set up environment:
 Create a `.env` file:
 ```bash
 GROK_API_KEY=your_grok_api_key_here
 DATABASE_URL="file:./prisma/dev.db"
 ```
 
-2. **Start with Docker Compose:**
+2. Start with Docker Compose:
 ```bash
 docker-compose up
 ```
 
-That's it! The application will be available at [http://localhost:3000](http://localhost:3000)
+The application will be available at http://localhost:3000
 
-The Docker setup includes:
-- Multi-stage build for optimized image size
-- Health checks for reliability
-- Volume mounting for database persistence
-- Production-ready configuration
+The Docker setup uses a multi-stage build for optimized image size, includes health checks for reliability, mounts volumes for database persistence, and uses production-ready configuration.
 
 ### Production Build
 
@@ -234,177 +200,158 @@ npm run build
 npm start
 ```
 
-## 📖 How to Use (For Sales Reps)
+## How to Use
 
 ### Adding a Lead
-1. Click **"New Lead"** on the Leads page
-2. Fill in: Name, Email, Company, Notes (optional)
-3. Click **"Create Lead"**
+
+Click "New Lead" on the Leads page, fill in name, email, company, and optional notes, then click "Create Lead."
 
 ### Qualifying a Lead
-1. Click on any lead to open the detail page
-2. Click **"Qualify Lead"**
-3. **Optional**: Check "Use Custom Scoring Criteria" and adjust weights (1-5 scale)
-   - Higher weight = more important in scoring
-   - Example: Set "Budget Signals" to 5/5 if budget is critical
-4. Select a Grok model (default: grok-3)
-5. Click **"Qualify with Grok"**
-6. See the score, reasoning, and breakdown
 
-**Pro tip:** Use custom criteria when you know what matters most. For example, if you're targeting enterprise deals, boost "Company Size" and "Decision Maker" weights.
+Open a lead's detail page and click "Qualify Lead." Optionally check "Use Custom Scoring Criteria" and adjust weights on a 1-5 scale. Higher weight means that factor matters more in scoring. Select a Grok model (default is grok-3) and click "Qualify with Grok." The results show the score, reasoning, and a breakdown of each factor.
+
+Use custom criteria when you know what matters most. For example, if targeting enterprise deals, increase "Company Size" and "Decision Maker" weights.
 
 ### Generating a Message
-1. On a lead's detail page, click **"Generate Message"**
-2. Grok creates a personalized subject line and email body
-3. Review the message in the modal
-4. Copy and use it in your email client
-5. The message is automatically logged in the activity timeline
+
+On a lead's detail page, click "Generate Message." Grok creates a personalized subject line and email body. Review the message in the modal, copy it to your email client, and send. The message is automatically logged in the activity timeline.
 
 ### Managing Your Pipeline
-1. Go to the **Pipeline** page
-2. See all leads organized by stage
-3. Click a lead card to view details
-4. Use the dropdown on the lead detail page to change stages
-5. **Closed** stage is collapsed by default—click the arrow to expand
+
+Go to the Pipeline page to see all leads organized by stage. Click a lead card to view details. Use the dropdown on the lead detail page to change stages. The Closed stage is collapsed by default—click the arrow to expand.
 
 ### Comparing Models
-1. Go to the **Evaluation** page
-2. Click **"Test All Models"**
-3. Wait ~15 seconds for results
-4. See which model performs best for your leads
-5. Use the recommended model for qualification
 
-## 🔧 API Documentation
+Go to the Evaluation page and click "Test All Models." Wait about 15 seconds for results. The dashboard shows which model performs best for your leads, with recommendations on which to use for qualification.
+
+## API Documentation
 
 ### Lead Management
 
-**GET /api/leads**
+GET /api/leads
 - Get all leads with optional filtering
-- Query params: `stage`, `minScore`, `maxScore`, `limit`
-- Returns: `{ success: true, data: Lead[], count: number }`
+- Query params: stage, minScore, maxScore, limit
+- Returns: { success: true, data: Lead[], count: number }
 
-**POST /api/leads**
+POST /api/leads
 - Create a new lead
-- Body: `{ name: string, email: string, company: string, notes?: string, metadata?: string }`
-- Returns: `{ success: true, data: Lead }`
+- Body: { name: string, email: string, company: string, notes?: string, metadata?: string }
+- Returns: { success: true, data: Lead }
 
-**GET /api/leads/[id]**
+GET /api/leads/[id]
 - Get lead by ID with full activity history
-- Returns: `{ success: true, data: Lead }`
+- Returns: { success: true, data: Lead }
 
-**PUT /api/leads/[id]**
+PUT /api/leads/[id]
 - Update lead information
-- Body: `{ name?, email?, company?, notes?, stage?, score? }`
+- Body: { name?, email?, company?, notes?, stage?, score? }
 
-**DELETE /api/leads/[id]**
+DELETE /api/leads/[id]
 - Delete a lead and all associated activities
 
 ### Lead Qualification
 
-**POST /api/leads/[id]/qualify**
+POST /api/leads/[id]/qualify
 - Qualify a lead using Grok AI
-- Body: `{ model?: 'grok-3' | 'grok-4-fast-reasoning' | 'grok-4-fast-non-reasoning', scoringCriteria?: { companySizeWeight, industryMatchWeight, budgetSignalsWeight, decisionMakerWeight } }`
-- Returns: `{ success: true, data: { lead, qualification: { score, reasoning, qualificationStatus, breakdown }, responseTime } }`
+- Body: { model?: 'grok-3' | 'grok-4-fast-reasoning' | 'grok-4-fast-non-reasoning', scoringCriteria?: { companySizeWeight, industryMatchWeight, budgetSignalsWeight, decisionMakerWeight } }
+- Returns: { success: true, data: { lead, qualification: { score, reasoning, qualificationStatus, breakdown }, responseTime } }
 
 ### Messaging
 
-**POST /api/leads/[id]/message**
+POST /api/leads/[id]/message
 - Generate personalized outreach message
-- Body: `{ model?: string, context?: { previousInteractions?, companyInfo?, painPoints?, goals? } }`
-- Returns: `{ success: true, data: { outreach: { subjectLine, emailBody, followUpSuggestions, tone }, responseTime } }`
+- Body: { model?: string, context?: { previousInteractions?, companyInfo?, painPoints?, goals? } }
+- Returns: { success: true, data: { outreach: { subjectLine, emailBody, followUpSuggestions, tone }, responseTime } }
 
 ### Pipeline Management
 
-**GET /api/pipeline**
+GET /api/pipeline
 - Get all pipeline stages
-- Returns: `{ success: true, data: PipelineStage[] }`
+- Returns: { success: true, data: PipelineStage[] }
 
-**PUT /api/leads/[id]/stage**
+PUT /api/leads/[id]/stage
 - Update lead stage
-- Body: `{ stage: string }`
+- Body: { stage: string }
 - Automatically logs stage change activity
 
 ### Search
 
-**GET /api/search**
+GET /api/search
 - Search leads across multiple fields
-- Query params:
-  - `q`: Search query (required)
-  - `stage`: Filter by stage
-  - `minScore`, `maxScore`: Score range
-- Returns: `{ success: true, data: Lead[], count: number, query: string }`
+- Query params: q (required), stage, minScore, maxScore
+- Returns: { success: true, data: Lead[], count: number, query: string }
 - Searches: name, email, company, notes, activity descriptions
 
 ### Scoring Criteria
 
-**GET /api/scoring-criteria**
+GET /api/scoring-criteria
 - Get current scoring criteria (default or custom)
 
-**POST /api/scoring-criteria**
+POST /api/scoring-criteria
 - Create new scoring criteria
-- Body: `{ companySizeWeight: number, industryMatchWeight: number, budgetSignalsWeight: number, decisionMakerWeight: number }`
+- Body: { companySizeWeight: number, industryMatchWeight: number, budgetSignalsWeight: number, decisionMakerWeight: number }
 
-**PUT /api/scoring-criteria**
+PUT /api/scoring-criteria
 - Update scoring criteria
 
-**POST /api/leads/rescore**
+POST /api/leads/rescore
 - Re-score all leads with updated criteria
-- Body: `{ criteriaId?: string }`
+- Body: { criteriaId?: string }
 
 ### Evaluation
 
-**GET /api/evaluation**
+GET /api/evaluation
 - Get evaluation metrics and results
-- Returns: `{ success: true, data: { models: ModelMetrics[], overallAverageResponseTime, overallAccuracy, recommendations, lastRunAt } }`
+- Returns: { success: true, data: { models: ModelMetrics[], overallAverageResponseTime, overallAccuracy, recommendations, lastRunAt } }
 
-**POST /api/evaluation**
+POST /api/evaluation
 - Run model evaluation
-- Body: `{ model?: string, saveToDatabase?: boolean }`
+- Body: { model?: string, saveToDatabase?: boolean }
 - Returns: Evaluation results and metrics
 
-## 🗄️ Database Schema
+## Database Schema
 
 ### Lead
-- `id`: Unique identifier
-- `name`, `email`, `company`: Basic information
-- `score`: Qualification score (0-100, nullable)
-- `stage`: Current pipeline stage
-- `notes`: Free-form notes
-- `metadata`: JSON string for additional data
-- `createdAt`, `updatedAt`: Timestamps
+- id: Unique identifier
+- name, email, company: Basic information
+- score: Qualification score (0-100, nullable)
+- stage: Current pipeline stage
+- notes: Free-form notes
+- metadata: JSON string for additional data
+- createdAt, updatedAt: Timestamps
 
 ### PipelineStage
-- `id`, `name`: Stage identifier
-- `order`: Display order
-- `description`: Stage description
+- id, name: Stage identifier
+- order: Display order
+- description: Stage description
 
 ### Activity
-- `id`, `leadId`: References
-- `type`: Activity type (qualification, message, stage_change, score_update, note)
-- `description`: Human-readable description
-- `timestamp`: When it happened
-- `grokResponse`: Full Grok response (JSON)
-- `modelUsed`: Which Grok model was used
-- `input`, `output`: Input/output data (JSON)
-- `userTriggered`: Who triggered it
+- id, leadId: References
+- type: Activity type (qualification, message, stage_change, score_update, note)
+- description: Human-readable description
+- timestamp: When it happened
+- grokResponse: Full Grok response (JSON)
+- modelUsed: Which Grok model was used
+- input, output: Input/output data (JSON)
+- userTriggered: Who triggered it
 
 ### EvaluationResult
-- `id`, `modelVariant`: Model identifier
-- `leadId`: Reference to test lead
-- `responseTime`: Response time in milliseconds
-- `score`: Qualification score
-- `scoreConsistency`: Consistency metric
-- `responseQuality`: Quality metrics (JSON)
-- `createdAt`: When evaluated
+- id, modelVariant: Model identifier
+- leadId: Reference to test lead
+- responseTime: Response time in milliseconds
+- score: Qualification score
+- scoreConsistency: Consistency metric
+- responseQuality: Quality metrics (JSON)
+- createdAt: When evaluated
 
 ### ScoringCriteria
-- `id`: Unique identifier
-- `userId`: For multi-user support (optional)
-- `companySizeWeight`, `industryMatchWeight`, `budgetSignalsWeight`, `decisionMakerWeight`: Weights (Float, default 1.0)
-- `isDefault`: Whether this is the default criteria
-- `createdAt`, `updatedAt`: Timestamps
+- id: Unique identifier
+- userId: For multi-user support (optional)
+- companySizeWeight, industryMatchWeight, budgetSignalsWeight, decisionMakerWeight: Weights (Float, default 1.0)
+- isDefault: Whether this is the default criteria
+- createdAt, updatedAt: Timestamps
 
-## 🧪 Testing
+## Testing
 
 Run the test suite:
 ```bash
@@ -416,53 +363,49 @@ Run tests in watch mode:
 npm run test:watch
 ```
 
-Test coverage includes:
-- Prompt engineering functions
-- Evaluation runner and metrics
-- API endpoint validation
-- Error handling
+Test coverage includes prompt engineering functions, evaluation runner and metrics, API endpoint validation, and error handling.
 
-## 🐛 Troubleshooting
+## Troubleshooting
 
 ### Database Issues
 
-**Migration errors:**
+Migration errors:
 ```bash
 npx prisma migrate reset
 npx prisma migrate dev
 ```
 
-**Database not found:**
-Ensure `DATABASE_URL` is set correctly in `.env.local`:
+Database not found:
+Ensure DATABASE_URL is set correctly in `.env.local`:
 ```
 DATABASE_URL="file:./prisma/dev.db"
 ```
 
 ### API Key Issues
 
-**Grok API errors:**
+Grok API errors:
 - Verify your API key is correct in `.env.local` or `.env`
-- Check API key permissions at [console.x.ai](https://console.x.ai)
+- Check API key permissions at console.x.ai
 - Ensure you have sufficient API credits
 - The application includes comprehensive error handling for API failures
 
-**Rate limiting:**
+Rate limiting:
 - Error messages will clearly indicate rate limit issues
 - Consider implementing retry logic for production use
 
 ### Build Issues
 
-**Prisma client not generated:**
+Prisma client not generated:
 ```bash
 npx prisma generate
 ```
 
-**Type errors:**
+Type errors:
 ```bash
 npm run build
 ```
 
-**Docker build failures:**
+Docker build failures:
 - Ensure Docker has sufficient memory (4GB+ recommended)
 - Check that all dependencies are listed in package.json
 - Verify Node.js version compatibility (Node 18+)
@@ -474,38 +417,38 @@ If port 3000 is already in use:
 PORT=3001 npm run dev
 ```
 
-Or update `docker-compose.yml` to use a different port.
+Or update docker-compose.yml to use a different port.
 
 ### Common Issues
 
-**"Lead not found" error:**
+Lead not found error:
 - Check that the lead ID is correct
 - Verify the database is properly initialized
 - Run `npm run db:seed` to populate sample data
 
-**Search not working:**
+Search not working:
 - Ensure you're typing in the search box (it's real-time, no button needed)
 - Check browser console for errors
 - Verify the API is running
 
-**Evaluation taking too long:**
-- The demo uses 2 leads for speed (~15 seconds)
+Evaluation taking too long:
+- The demo uses 2 leads for speed (about 15 seconds)
 - Full evaluation with 10 leads takes longer
 - Check Grok API response times
 
-## 📝 Development Notes
+## Development Notes
 
 ### Environment Variables
-- `GROK_API_KEY`: **Required** - Your Grok API key from console.x.ai
-- `DATABASE_URL`: Database connection string (default: `file:./prisma/dev.db`)
-- `NODE_ENV`: Set to `production` for production builds
+- GROK_API_KEY: Required - Your Grok API key from console.x.ai
+- DATABASE_URL: Database connection string (default: file:./prisma/dev.db)
+- NODE_ENV: Set to production for production builds
 
 ### Code Organization
-- **API routes**: Follow RESTful conventions with consistent error handling
-- **Prompts**: Modularized for easy iteration and A/B testing
-- **Evaluation framework**: Extensible for new models and metrics
-- **Type safety**: TypeScript enforced throughout for reliability
-- **Error handling**: Comprehensive validation and user-friendly error messages
+- API routes follow RESTful conventions with consistent error handling
+- Prompts are modularized for easy iteration and A/B testing
+- Evaluation framework is extensible for new models and metrics
+- Type safety is enforced with TypeScript throughout
+- Error handling provides comprehensive validation and user-friendly messages
 
 ### Performance Considerations
 - Database queries are indexed for common lookups (stage, score)
@@ -515,60 +458,42 @@ Or update `docker-compose.yml` to use a different port.
 
 ### Design Decisions
 
-**Why SQLite?**
-- Perfect for demos and small teams
-- No database server setup required
-- Easy to backup (just copy the file)
-- Can migrate to PostgreSQL/MySQL later if needed
+Why SQLite:
+SQLite works well for demos and small teams. It requires no database server setup, is easy to backup (just copy the file), and can be migrated to PostgreSQL or MySQL later if needed.
 
-**Why Next.js App Router?**
-- Modern React patterns
-- Built-in API routes (no separate backend)
-- Server-side rendering for better performance
-- TypeScript support out of the box
+Why Next.js App Router:
+The App Router provides modern React patterns, built-in API routes eliminating the need for a separate backend, server-side rendering for better performance, and TypeScript support out of the box.
 
-**Why Tailwind CSS?**
-- Rapid UI development
-- Consistent design system
-- Easy to customize
-- Minimal CSS file size
+Why Tailwind CSS:
+Tailwind enables rapid UI development with a consistent design system, easy customization, and minimal CSS file size.
 
-**Why Zod validation?**
-- Type-safe schema validation
-- Catches errors before they reach Grok API
-- Better error messages for users
-- Works seamlessly with TypeScript
+Why Zod validation:
+Zod provides type-safe schema validation, catches errors before they reach the Grok API, produces better error messages for users, and works seamlessly with TypeScript.
 
-## 🎯 Demo Presentation Guide
+## Demo Presentation Guide
 
-**For a 10-15 minute client demo:**
+For a 10-15 minute client demo:
 
-1. **Start with the problem** (2 min)
-   - "Sales reps waste time on unqualified leads"
-   - "Generic emails get ignored"
-   - "Hard to track what's working"
+1. Start with the problem (2 minutes)
+   - Sales reps waste time on unqualified leads
+   - Generic emails get ignored
+   - Hard to track what's working
 
-2. **Show the solution** (8-10 min)
-   - **Leads page**: Show search, filtering, score trends, next actions
-   - **Qualify a lead**: Use custom criteria, show score breakdown
-   - **Generate a message**: Show personalized output
-   - **Pipeline**: Show visual organization
-   - **Evaluation**: Run model comparison, show recommendations
+2. Show the solution (8-10 minutes)
+   - Leads page: Show search, filtering, score trends, next actions
+   - Qualify a lead: Use custom criteria, show score breakdown
+   - Generate a message: Show personalized output
+   - Pipeline: Show visual organization
+   - Evaluation: Run model comparison, show recommendations
 
-3. **Highlight key differentiators** (2-3 min)
+3. Highlight key differentiators (2-3 minutes)
    - Customizable scoring (not one-size-fits-all)
    - Model comparison (data-driven decisions)
    - Activity tracking (complete visibility)
    - Fast evaluation (under 15 seconds)
 
-**Pro tip:** Have a few leads pre-qualified so you can show the system working immediately.
+Have a few leads pre-qualified so you can show the system working immediately.
 
-## 📄 License
+## License
 
 This project is a demonstration prototype built for evaluation purposes.
-
----
-
-**Built with ❤️ using Grok AI**
-
-*Questions? Check the troubleshooting section or review the code—it's well-documented and easy to follow.*
