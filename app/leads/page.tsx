@@ -125,6 +125,61 @@ export default function LeadsPage() {
 
   const sortedLeads = sortLeads(leads)
 
+  const exportToCSV = () => {
+    if (sortedLeads.length === 0) {
+      alert('No leads to export')
+      return
+    }
+
+    // CSV headers - only what sales reps need
+    const headers = [
+      'Name',
+      'Email',
+      'Company',
+      'Score',
+      'Stage',
+      'Notes',
+      'Last Activity',
+      'Created Date'
+    ]
+
+    // Build each row
+    const rows = sortedLeads.map(lead => {
+      const lastActivity = getLastActivity(lead)
+      const lastActivityText = lastActivity 
+        ? `${getActivityShortDescription(lastActivity)} - ${formatTimeAgo(lastActivity.timestamp)}`
+        : 'No activity'
+      
+      return [
+        lead.name || '',
+        lead.email || '',
+        lead.company || '',
+        lead.score !== null ? lead.score.toString() : 'N/A',
+        lead.stage || '',
+        lead.notes || '',
+        lastActivityText,
+        new Date(lead.createdAt).toLocaleDateString()
+      ]
+    })
+
+    // Combine headers and rows
+    const csvContent = [
+      headers.join(','),
+      ...rows.map(row => row.map(cell => `"${String(cell).replace(/"/g, '""')}"`).join(','))
+    ].join('\n')
+
+    // Create blob and download
+    const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' })
+    const link = document.createElement('a')
+    const url = URL.createObjectURL(blob)
+    link.setAttribute('href', url)
+    link.setAttribute('download', `leads_export_${new Date().toISOString().split('T')[0]}.csv`)
+    link.style.visibility = 'hidden'
+    document.body.appendChild(link)
+    link.click()
+    document.body.removeChild(link)
+  }
+
   const formatTimeAgo = (timestamp: string) => {
     const now = new Date()
     const time = new Date(timestamp)
@@ -221,12 +276,21 @@ export default function LeadsPage() {
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
       <div className="mb-6 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
         <h1 className="text-3xl font-bold text-gray-900">Leads</h1>
-        <Link
-          href="/leads/new"
-          className="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-blue-600 hover:bg-blue-700"
-        >
-          New Lead
-        </Link>
+        <div className="flex gap-2">
+          <button
+            onClick={exportToCSV}
+            disabled={loading || sortedLeads.length === 0}
+            className="inline-flex items-center px-4 py-2 border border-gray-300 text-sm font-medium rounded-md shadow-sm text-gray-700 bg-white hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed"
+          >
+            Export CSV
+          </button>
+          <Link
+            href="/leads/new"
+            className="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-blue-600 hover:bg-blue-700"
+          >
+            New Lead
+          </Link>
+        </div>
       </div>
 
       <div className="mb-6 flex flex-col sm:flex-row gap-4">
