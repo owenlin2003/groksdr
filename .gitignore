@@ -58,7 +58,6 @@ prisma/prisma/dev.db
 # Unrelated project directories
 Music/
 lifecycle_cost_tool/
-api/
 thinkorswim/
 tempCodeRunnerFile.py
 tempCodeRunnerFile.py.backup
