@@ -82,12 +82,17 @@ export async function POST(
       },
     })
 
+    // Build description with custom criteria mention if used
+    const criteriaNote = criteria && scoringCriteria 
+      ? ` (using custom criteria: Company Size ${criteria.companySizeWeight}/5, Budget ${criteria.budgetSignalsWeight}/5, Decision Maker ${criteria.decisionMakerWeight}/5, Industry ${criteria.industryMatchWeight}/5)`
+      : ''
+    
     // Log activity with full details
     await prisma.activity.create({
       data: {
         leadId: lead.id,
         type: 'qualification',
-        description: `Lead qualified with score ${qualification.score}: ${qualification.reasoning}`,
+        description: `Lead qualified with score ${qualification.score}${criteriaNote}: ${qualification.reasoning}`,
         timestamp: new Date(),
         grokResponse: JSON.stringify(qualification),
         modelUsed: model,

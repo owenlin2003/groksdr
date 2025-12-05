@@ -57,6 +57,11 @@ function buildQualificationPrompt(
     }
   }
 
+  const isCustomCriteria = scoringCriteria !== undefined
+  const criteriaNote = isCustomCriteria 
+    ? '\nNote: You are using CUSTOM scoring criteria weights provided by the user. Make sure to mention this in your reasoning.'
+    : ''
+
   const prompt = `You are an expert Sales Development Representative (SDR) evaluating a lead for qualification.
 
 Lead Information:
@@ -67,10 +72,11 @@ ${leadData.notes ? `- Notes: ${leadData.notes}` : ''}
 ${Object.keys(metadataObj).length > 0 ? `- Additional Metadata: ${JSON.stringify(metadataObj, null, 2)}` : ''}
 
 Scoring Criteria Weights:
-- Company Size: ${criteria.companySizeWeight}x
-- Industry Match: ${criteria.industryMatchWeight}x
-- Budget Signals: ${criteria.budgetSignalsWeight}x
-- Decision Maker Title: ${criteria.decisionMakerWeight}x
+- Company Size: ${criteria.companySizeWeight}/5
+- Industry Match: ${criteria.industryMatchWeight}/5
+- Budget Signals: ${criteria.budgetSignalsWeight}/5
+- Decision Maker Title: ${criteria.decisionMakerWeight}/5
+${criteriaNote}
 
 Evaluate this lead based on the following factors:
 
@@ -102,10 +108,12 @@ Calculate a score from 0-100 where:
 - 50-79: Potentially qualified (maybe)
 - 0-49: Not qualified (not_qualified)
 
+${isCustomCriteria ? `IMPORTANT: In your reasoning, explicitly mention that you are using custom scoring criteria with the weights provided above. For example: "Using your custom criteria (Company Size: ${criteria.companySizeWeight}/5, Budget: ${criteria.budgetSignalsWeight}/5), [lead name] scores [score] because..."` : ''}
+
 Respond with a JSON object in this exact format:
 {
   "score": <number 0-100>,
-  "reasoning": "<detailed explanation of your evaluation, 2-3 sentences>",
+  "reasoning": "<detailed explanation of your evaluation, 2-3 sentences${isCustomCriteria ? ', mentioning the custom criteria weights used' : ''}>",
   "qualificationStatus": "<qualified|maybe|not_qualified>",
   "breakdown": {
     "companySize": <number 0-100>,

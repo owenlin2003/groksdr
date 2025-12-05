@@ -4,6 +4,7 @@ import { useEffect, useState } from 'react'
 import { useParams, useRouter } from 'next/navigation'
 import Link from 'next/link'
 import ActivityTimeline from '@/components/ActivityTimeline'
+import QualifyLeadModal from '@/components/QualifyLeadModal'
 
 interface Lead {
   id: string
@@ -36,6 +37,7 @@ export default function LeadDetailPage() {
   const [lead, setLead] = useState<Lead | null>(null)
   const [loading, setLoading] = useState(true)
   const [qualifying, setQualifying] = useState(false)
+  const [showQualifyModal, setShowQualifyModal] = useState(false)
   const [generatingMessage, setGeneratingMessage] = useState(false)
   const [newStage, setNewStage] = useState('')
   const [generatedMessage, setGeneratedMessage] = useState<{
@@ -65,13 +67,25 @@ export default function LeadDetailPage() {
     }
   }
 
-  const handleQualify = async () => {
+  const handleQualify = async (
+    useCustom: boolean,
+    criteria?: {
+      companySizeWeight: number
+      industryMatchWeight: number
+      budgetSignalsWeight: number
+      decisionMakerWeight: number
+    },
+    model: string = 'grok-3'
+  ) => {
     try {
       setQualifying(true)
       const response = await fetch(`/api/leads/${leadId}/qualify`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ model: 'grok-3' }),
+        body: JSON.stringify({
+          model,
+          scoringCriteria: useCustom ? criteria : undefined,
+        }),
       })
       const data = await response.json()
       if (data.success) {
@@ -230,7 +244,7 @@ export default function LeadDetailPage() {
             <h3 className="text-xl font-medium text-gray-900 mb-4">Actions</h3>
             <div className="flex flex-wrap gap-3">
               <button
-                onClick={handleQualify}
+                onClick={() => setShowQualifyModal(true)}
                 disabled={qualifying}
                 className="inline-flex items-center px-5 py-3 border border-transparent text-base font-medium rounded-md text-white bg-blue-600 hover:bg-blue-700 disabled:opacity-50"
               >
@@ -356,6 +370,15 @@ export default function LeadDetailPage() {
             </div>
           </div>
         </div>
+      )}
+
+      {showQualifyModal && (
+        <QualifyLeadModal
+          isOpen={showQualifyModal}
+          onClose={() => setShowQualifyModal(false)}
+          onQualify={handleQualify}
+          leadName={lead.name}
+        />
       )}
     </div>
   )
