@@ -20,6 +20,7 @@ export default function LeadsPage() {
   const [loading, setLoading] = useState(true)
   const [searchQuery, setSearchQuery] = useState('')
   const [filterStage, setFilterStage] = useState('')
+  const [sortBy, setSortBy] = useState('score-desc')
 
   useEffect(() => {
     fetchLeads()
@@ -80,12 +81,44 @@ export default function LeadsPage() {
       New: 'bg-blue-100 text-blue-800',
       Qualified: 'bg-purple-100 text-purple-800',
       Contacted: 'bg-yellow-100 text-yellow-800',
-      'Meeting Scheduled': 'bg-orange-100 text-orange-800',
       Closed: 'bg-green-100 text-green-800',
       Stale: 'bg-gray-100 text-gray-800',
     }
     return colors[stage] || 'bg-gray-100 text-gray-800'
   }
+
+  const sortLeads = (leadsToSort: Lead[]) => {
+    const sorted = [...leadsToSort]
+    
+    switch (sortBy) {
+      case 'score-desc':
+        return sorted.sort((a, b) => {
+          const scoreA = a.score ?? -1
+          const scoreB = b.score ?? -1
+          return scoreB - scoreA
+        })
+      case 'score-asc':
+        return sorted.sort((a, b) => {
+          const scoreA = a.score ?? 101
+          const scoreB = b.score ?? 101
+          return scoreA - scoreB
+        })
+      case 'name-asc':
+        return sorted.sort((a, b) => a.name.localeCompare(b.name))
+      case 'name-desc':
+        return sorted.sort((a, b) => b.name.localeCompare(a.name))
+      case 'company-asc':
+        return sorted.sort((a, b) => a.company.localeCompare(b.company))
+      case 'date-desc':
+        return sorted.sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime())
+      case 'date-asc':
+        return sorted.sort((a, b) => new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime())
+      default:
+        return sorted
+    }
+  }
+
+  const sortedLeads = sortLeads(leads)
 
   return (
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
@@ -129,6 +162,19 @@ export default function LeadsPage() {
           <option value="Closed">Closed</option>
           <option value="Stale">Stale</option>
         </select>
+        <select
+          value={sortBy}
+          onChange={(e) => setSortBy(e.target.value)}
+          className="block rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm px-4 py-2 border"
+        >
+          <option value="score-desc">Score: High to Low</option>
+          <option value="score-asc">Score: Low to High</option>
+          <option value="name-asc">Name: A to Z</option>
+          <option value="name-desc">Name: Z to A</option>
+          <option value="company-asc">Company: A to Z</option>
+          <option value="date-desc">Date: Newest First</option>
+          <option value="date-asc">Date: Oldest First</option>
+        </select>
       </div>
 
       {loading ? (
@@ -142,7 +188,7 @@ export default function LeadsPage() {
       ) : (
         <div className="bg-white shadow overflow-hidden sm:rounded-md">
           <ul className="divide-y divide-gray-200">
-            {leads.map((lead) => (
+            {sortedLeads.map((lead) => (
               <li key={lead.id}>
                 <Link
                   href={`/leads/${lead.id}`}
