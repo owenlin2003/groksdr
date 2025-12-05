@@ -63,18 +63,6 @@ export default function PipelinePage() {
     return 'bg-red-100 text-red-800'
   }
 
-  const getStageColor = (stageName: string) => {
-    const colors: Record<string, { bg: string; border: string; text: string }> = {
-      New: { bg: 'bg-blue-50', border: 'border-blue-200', text: 'text-blue-700' },
-      Qualified: { bg: 'bg-purple-50', border: 'border-purple-200', text: 'text-purple-700' },
-      Contacted: { bg: 'bg-yellow-50', border: 'border-yellow-200', text: 'text-yellow-700' },
-      'Meeting Scheduled': { bg: 'bg-orange-50', border: 'border-orange-200', text: 'text-orange-700' },
-      Closed: { bg: 'bg-green-50', border: 'border-green-200', text: 'text-green-700' },
-      Stale: { bg: 'bg-gray-50', border: 'border-gray-200', text: 'text-gray-700' },
-    }
-    return colors[stageName] || { bg: 'bg-gray-50', border: 'border-gray-200', text: 'text-gray-700' }
-  }
-
   if (loading) {
     return (
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
@@ -85,76 +73,57 @@ export default function PipelinePage() {
 
   return (
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-      <div className="mb-6">
-        <h1 className="text-4xl font-bold text-gray-900 mb-2">Pipeline</h1>
-        <p className="text-lg text-gray-600">Visualize your leads across sales stages</p>
-      </div>
+      <h1 className="text-4xl font-bold text-gray-900 mb-6">Pipeline</h1>
 
-      <div className="overflow-x-auto pb-4">
-        <div className="inline-flex gap-5 min-w-full">
-          {stages.map((stage) => {
-            const stageLeads = getLeadsForStage(stage.name)
-            const stageColors = getStageColor(stage.name)
-            return (
-              <div
-                key={stage.id}
-                className={`flex-shrink-0 w-80 ${stageColors.bg} rounded-xl p-5 border-2 ${stageColors.border} shadow-sm`}
-              >
-                <div className="mb-5 pb-4 border-b border-gray-200">
-                  <div className="flex items-center justify-between mb-2">
-                    <h2 className={`text-xl font-bold ${stageColors.text}`}>
-                      {stage.name}
-                    </h2>
-                    <span className={`inline-flex items-center justify-center w-8 h-8 rounded-full ${stageColors.bg} ${stageColors.text} font-bold text-base border-2 ${stageColors.border}`}>
-                      {stageLeads.length}
-                    </span>
-                  </div>
-                  {stage.description && (
-                    <p className="text-sm text-gray-600 mt-1">{stage.description}</p>
-                  )}
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+        {stages.map((stage) => {
+          const stageLeads = getLeadsForStage(stage.name)
+          return (
+            <div
+              key={stage.id}
+              className="bg-white rounded-lg border border-gray-200 p-5 shadow-sm"
+            >
+              <div className="mb-4 pb-4 border-b border-gray-200">
+                <div className="flex items-center justify-between mb-2">
+                  <h2 className="text-xl font-semibold text-gray-900">
+                    {stage.name}
+                  </h2>
+                  <span className="inline-flex items-center justify-center w-8 h-8 rounded-full bg-gray-100 text-gray-700 font-semibold text-sm">
+                    {stageLeads.length}
+                  </span>
                 </div>
-
-                <div className="space-y-3 min-h-[200px]">
-                  {stageLeads.map((lead) => (
-                    <Link
-                      key={lead.id}
-                      href={`/leads/${lead.id}`}
-                      className="block p-4 bg-white rounded-lg shadow-sm hover:shadow-lg transition-all duration-200 border border-gray-200 hover:border-blue-300 hover:-translate-y-0.5"
-                    >
-                      <div className="flex items-start justify-between mb-2">
-                        <div className="flex-1">
-                          <p className="text-base font-semibold text-gray-900 mb-1">{lead.name}</p>
-                          <p className="text-sm text-gray-600 mb-1">{lead.company}</p>
-                          <p className="text-xs text-gray-500 truncate">{lead.email}</p>
-                        </div>
-                      </div>
-                      {lead.score !== null && (
-                        <div className="mt-3 pt-3 border-t border-gray-100">
-                          <span
-                            className={`inline-flex items-center px-3 py-1.5 rounded-full text-sm font-semibold ${getScoreColor(lead.score)}`}
-                          >
-                            Score: {lead.score}
-                          </span>
-                        </div>
-                      )}
-                    </Link>
-                  ))}
-                  {stageLeads.length === 0 && (
-                    <div className="flex flex-col items-center justify-center py-12 text-center">
-                      <div className="w-16 h-16 rounded-full bg-gray-100 flex items-center justify-center mb-3">
-                        <svg className="w-8 h-8 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M20 13V6a2 2 0 00-2-2H6a2 2 0 00-2 2v7m16 0v5a2 2 0 01-2 2H6a2 2 0 01-2-2v-5m16 0h-2.586a1 1 0 00-.707.293l-2.414 2.414a1 1 0 01-.707.293h-3.172a1 1 0 01-.707-.293l-2.414-2.414A1 1 0 006.586 13H4" />
-                        </svg>
-                      </div>
-                      <p className="text-base text-gray-400 font-medium">No leads in this stage</p>
-                      <p className="text-sm text-gray-400 mt-1">Move leads here to get started</p>
-                    </div>
-                  )}
-                </div>
+                {stage.description && (
+                  <p className="text-sm text-gray-500">{stage.description}</p>
+                )}
               </div>
-            )
-          })}
-        </div>
+
+              <div className="space-y-3">
+                {stageLeads.map((lead) => (
+                  <Link
+                    key={lead.id}
+                    href={`/leads/${lead.id}`}
+                    className="block p-4 bg-gray-50 rounded-lg border border-gray-200 hover:bg-gray-100 transition-colors"
+                  >
+                    <p className="text-base font-medium text-gray-900 mb-1">{lead.name}</p>
+                    <p className="text-sm text-gray-600 mb-2">{lead.company}</p>
+                    {lead.score !== null && (
+                      <span
+                        className={`inline-flex items-center px-2 py-1 rounded text-xs font-medium ${getScoreColor(lead.score)}`}
+                      >
+                        Score: {lead.score}
+                      </span>
+                    )}
+                  </Link>
+                ))}
+                {stageLeads.length === 0 && (
+                  <p className="text-sm text-gray-400 text-center py-8">
+                    No leads in this stage
+                  </p>
+                )}
+              </div>
+            </div>
+          )
+        })}
       </div>
     </div>
   )
