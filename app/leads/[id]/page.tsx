@@ -187,8 +187,11 @@ export default function LeadDetailPage() {
     return (
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         <p className="text-gray-500">Lead not found</p>
-        <Link href="/leads" className="text-blue-600 hover:text-blue-800">
-          Back to Leads
+        <Link 
+          href={cameFromPipeline ? "/pipeline" : "/leads"} 
+          className="text-blue-600 hover:text-blue-800"
+        >
+          {cameFromPipeline ? "← Back to Pipeline" : "← Back to Leads"}
         </Link>
       </div>
     )
@@ -198,10 +201,10 @@ export default function LeadDetailPage() {
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
       <div className="mb-6">
         <Link
-          href="/leads"
+          href={cameFromPipeline ? "/pipeline" : "/leads"}
           className="text-blue-600 hover:text-blue-800 text-base font-medium"
         >
-          ← Back to Leads
+          {cameFromPipeline ? "← Back to Pipeline" : "← Back to Leads"}
         </Link>
       </div>
 
@@ -278,7 +281,6 @@ export default function LeadDetailPage() {
                   <option value="Contacted">Contacted</option>
                   <option value="Meeting Scheduled">Meeting Scheduled</option>
                   <option value="Closed">Closed</option>
-                  <option value="Stale">Stale</option>
                 </select>
                 <button
                   onClick={handleStageChange}
