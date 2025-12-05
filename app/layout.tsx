@@ -35,7 +35,7 @@ export default function RootLayout({
                 <div className="flex">
                   <div className="flex-shrink-0 flex items-center">
                     <Link href="/" className="text-3xl font-bold text-gray-900">
-                      Grok SDR Demo
+                      Grok SDR
                     </Link>
                   </div>
                   <div className="hidden sm:ml-6 sm:flex sm:space-x-8">
