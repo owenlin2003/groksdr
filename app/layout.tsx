@@ -33,14 +33,14 @@ export default function RootLayout({
             <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
               <div className="flex justify-between h-16">
                 <div className="flex">
-                  <div className="flex-shrink-0 flex items-center gap-3">
-                    <Link href="/" className="flex items-center gap-3">
+                  <div className="flex-shrink-0 flex items-center">
+                    <Link href="/" className="flex items-center gap-2.5">
                       <img
                         src="/images.png"
                         alt="Grok Logo"
-                        className="h-10 w-auto object-contain"
+                        className="h-8 w-auto object-contain"
                       />
-                      <span className="text-3xl font-bold text-gray-900">
+                      <span className="text-2xl font-bold text-gray-900 leading-none">
                         SDR Demo
                       </span>
                     </Link>
