@@ -151,7 +151,7 @@ export default function LeadsPage() {
                   <div className="flex items-center justify-between">
                     <div className="flex-1 min-w-0">
                       <div className="flex items-center justify-between">
-                        <p className="text-lg font-semibold text-gray-900 truncate">
+                        <p className="text-lg font-semibold text-blue-600 truncate">
                           {lead.name}
                         </p>
                         <div className="ml-2 flex-shrink-0 flex gap-2">
