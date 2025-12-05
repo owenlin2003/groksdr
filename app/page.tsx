@@ -4,13 +4,13 @@ export default function Home() {
   return (
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
       <div className="text-center">
-        <h1 className="text-5xl font-bold text-gray-900 sm:text-6xl">
+        <h1 className="text-6xl font-bold text-gray-900 sm:text-7xl md:text-8xl">
           Grok SDR Demo
         </h1>
-        <p className="mt-4 text-2xl text-gray-600">
+        <p className="mt-6 text-3xl text-gray-600 sm:text-4xl">
           AI-Powered Sales Development Representative System
         </p>
-        <p className="mt-2 text-xl text-gray-500">
+        <p className="mt-4 text-2xl text-gray-500 sm:text-3xl">
           Intelligent lead qualification and personalized outreach powered by Grok
         </p>
       </div>
