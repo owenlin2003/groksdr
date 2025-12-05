@@ -27,8 +27,17 @@ export default function LeadsPage() {
   const [sortBy, setSortBy] = useState('score-desc')
 
   useEffect(() => {
-    fetchLeads()
-  }, [filterStage])
+    if (searchQuery.trim()) {
+      // Debounce search - wait 300ms after user stops typing
+      const timeoutId = setTimeout(() => {
+        performSearch()
+      }, 300)
+      return () => clearTimeout(timeoutId)
+    } else {
+      // If search is empty, fetch all leads
+      fetchLeads()
+    }
+  }, [searchQuery, filterStage])
 
   const fetchLeads = async () => {
     try {
@@ -49,7 +58,7 @@ export default function LeadsPage() {
     }
   }
 
-  const handleSearch = async () => {
+  const performSearch = async () => {
     if (!searchQuery.trim()) {
       fetchLeads()
       return
@@ -71,6 +80,10 @@ export default function LeadsPage() {
     } finally {
       setLoading(false)
     }
+  }
+
+  const handleSearch = () => {
+    performSearch()
   }
 
   const getScoreColor = (score: number | null) => {
