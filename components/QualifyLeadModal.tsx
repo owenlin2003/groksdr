@@ -46,11 +46,12 @@ export default function QualifyLeadModal({
       const data = await response.json()
       if (data.success && data.data.length > 0) {
         const defaultCriteria = data.data[0]
+        // Convert 0.2-1.0 multiplier to 1-5 scale for UI
         setCriteria({
-          companySizeWeight: defaultCriteria.companySizeWeight,
-          industryMatchWeight: defaultCriteria.industryMatchWeight,
-          budgetSignalsWeight: defaultCriteria.budgetSignalsWeight,
-          decisionMakerWeight: defaultCriteria.decisionMakerWeight,
+          companySizeWeight: Math.round(defaultCriteria.companySizeWeight * 5),
+          industryMatchWeight: Math.round(defaultCriteria.industryMatchWeight * 5),
+          budgetSignalsWeight: Math.round(defaultCriteria.budgetSignalsWeight * 5),
+          decisionMakerWeight: Math.round(defaultCriteria.decisionMakerWeight * 5),
         })
       }
     } catch (error) {
@@ -63,7 +64,15 @@ export default function QualifyLeadModal({
   const handleQualify = async () => {
     setLoading(true)
     try {
-      await onQualify(useCustomCriteria, useCustomCriteria ? criteria : undefined, model)
+      // Convert 1-5 scale to 0.2-1.0 multiplier for API
+      const apiCriteria = useCustomCriteria ? {
+        companySizeWeight: criteria.companySizeWeight / 5,
+        industryMatchWeight: criteria.industryMatchWeight / 5,
+        budgetSignalsWeight: criteria.budgetSignalsWeight / 5,
+        decisionMakerWeight: criteria.decisionMakerWeight / 5,
+      } : undefined
+      
+      await onQualify(useCustomCriteria, apiCriteria, model)
       onClose()
     } catch (error) {
       console.error('Error qualifying lead:', error)
