@@ -55,7 +55,6 @@ export default function EvaluationPage() {
       })
       const data = await response.json()
       if (data.success) {
-        alert(`Evaluation complete!\n\nTotal tests: ${data.data.summary.totalTests}\nSuccessful: ${data.data.summary.successfulTests}\nFailed: ${data.data.summary.failedTests}`)
         await fetchMetrics()
       } else {
         alert(`Error: ${data.error}`)
@@ -82,12 +81,20 @@ export default function EvaluationPage() {
         <h1 className="text-4xl font-bold text-gray-900">Model Evaluation</h1>
         <button
           onClick={handleRunEvaluation}
-          disabled={running}
+          disabled={running || loading}
           className="inline-flex items-center px-5 py-3 border border-transparent text-base font-medium rounded-md text-white bg-blue-600 hover:bg-blue-700 disabled:opacity-50"
         >
-          {running ? 'Running...' : 'Run Evaluation'}
+          {running ? 'Running Evaluation...' : loading ? 'Loading...' : 'Run Evaluation'}
         </button>
       </div>
+
+      {running && (
+        <div className="mb-6 bg-blue-50 border border-blue-200 rounded-lg p-4">
+          <p className="text-base text-blue-800">
+            Running evaluation across all models. This may take a few moments...
+          </p>
+        </div>
+      )}
 
       {metrics && (
         <>
