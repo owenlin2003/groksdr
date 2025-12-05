@@ -58,7 +58,10 @@ export async function POST(request: NextRequest) {
     return NextResponse.json(
       {
         success: true,
-        data: results,
+        data: {
+          ...results,
+          completedAt: new Date().toISOString(),
+        },
       },
       { status: 200 }
     )
@@ -117,11 +120,21 @@ export async function GET(request: NextRequest) {
     } else {
       // Get metrics for all models
       const metrics = await calculateEvaluationMetrics()
+      
+      // Get the most recent evaluation timestamp
+      const { prisma } = await import('@/lib/prisma')
+      const mostRecent = await prisma.evaluationResult.findFirst({
+        orderBy: { createdAt: 'desc' },
+        select: { createdAt: true },
+      })
 
       return NextResponse.json(
         {
           success: true,
-          data: metrics,
+          data: {
+            ...metrics,
+            lastRunAt: mostRecent?.createdAt ? new Date(mostRecent.createdAt).toISOString() : null,
+          },
         },
         { status: 200 }
       )
