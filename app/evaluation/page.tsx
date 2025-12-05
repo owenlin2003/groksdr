@@ -232,7 +232,7 @@ export default function EvaluationPage() {
                       <div className="flex justify-between items-center mb-1">
                         <span className="text-sm text-gray-600">Reliability</span>
                         <span className="text-base font-semibold text-gray-900">
-                          {model.accuracy.toFixed(0)}%
+                          {model.scoreConsistency.toFixed(0)}%
                         </span>
                       </div>
                       <p className="text-xs text-gray-500">

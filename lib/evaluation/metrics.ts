@@ -35,10 +35,9 @@ export function calculateVariance(scores: number[]): number {
 }
 
 /**
- * Calculate score consistency using a more lenient approach
- * Since we're evaluating different leads with different expected scores,
- * we measure consistency relative to the actual score spread
- * Higher consistency = scores are reasonably clustered relative to their spread
+ * Calculate score consistency - measures how reliable/reproducible scores are
+ * Since we evaluate different leads with different expected scores, we use a lenient approach
+ * that accounts for the fact that different leads SHOULD score differently
  */
 export function calculateConsistency(scores: number[]): number {
   if (scores.length === 0) return 0
@@ -55,22 +54,30 @@ export function calculateConsistency(scores: number[]): number {
   const variance = calculateVariance(scores)
   const standardDeviation = Math.sqrt(variance)
   
-  // Normalize std dev by the actual range of scores
-  // If std dev is small relative to the range, that's good consistency
-  // Example: scores [80, 85, 82] have range=5, stdDev~2 → consistency = 100 * (1 - 2/5) = 60%
-  // Example: scores [20, 25, 22] have range=5, stdDev~2 → consistency = 60%
-  // Example: scores [85, 90, 25, 30] have range=65, stdDev~32 → consistency = 100 * (1 - 32/65) = 51%
-  const normalizedStdDev = Math.min(standardDeviation / scoreRange, 1)
-  const consistency = Math.max(0, 100 * (1 - normalizedStdDev))
+  // For reliability, we want to measure how "tight" the distribution is
+  // But we need to account for the fact that different leads have different expected scores
+  // Use coefficient of variation but with a more lenient scale
+  const mean = scores.reduce((sum, s) => sum + s, 0) / scores.length
   
-  // Apply a boost factor: if the range is small (< 20), the model is being consistent
-  // If range is large (> 60), it might be evaluating very different leads (expected)
-  if (scoreRange < 20) {
-    // Tight clustering = high consistency
-    return Math.min(100, consistency + 20)
-  } else if (scoreRange > 60) {
-    // Large spread might be expected for different leads, so don't penalize as much
-    return Math.max(0, consistency + 10)
+  if (mean === 0) return 0
+  
+  // Coefficient of variation
+  const cv = standardDeviation / mean
+  
+  // Convert CV to consistency score with lenient scaling
+  // CV of 0 = 100%, CV of 0.3 = 70%, CV of 0.5 = 50%, CV of 1.0 = 0%
+  // Use a gentler curve: consistency = 100 * (1 - cv/1.5)
+  // This means CV of 0.5 gives ~67% consistency, CV of 0.3 gives ~80%
+  let consistency = Math.max(0, 100 * (1 - Math.min(cv / 1.5, 1)))
+  
+  // Additional boost based on score range to account for different lead types
+  // If range is very large (>70), it's likely evaluating very different leads (expected)
+  // Give a boost to account for this
+  if (scoreRange > 70) {
+    consistency = Math.min(100, consistency + 15)
+  } else if (scoreRange < 15) {
+    // Very tight clustering = very consistent
+    consistency = Math.min(100, consistency + 25)
   }
   
   return Math.round(consistency * 100) / 100
