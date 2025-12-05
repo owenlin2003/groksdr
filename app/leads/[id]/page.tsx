@@ -36,6 +36,7 @@ export default function LeadDetailPage() {
 
   const [lead, setLead] = useState<Lead | null>(null)
   const [loading, setLoading] = useState(true)
+  const [error, setError] = useState<string | null>(null)
   const [cameFromPipeline, setCameFromPipeline] = useState(false)
 
   useEffect(() => {
