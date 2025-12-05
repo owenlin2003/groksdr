@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from 'next/server'
 import { prisma } from '@/lib/prisma'
 import { qualifyLead } from '@/lib/prompts/qualification'
 import { GrokModel } from '@/lib/grok'
+import { applyAutoProgressionRules } from '@/lib/automation/rules'
 import { z } from 'zod'
 
 const QualifyLeadSchema = z.object({
