@@ -64,13 +64,23 @@ export default function LeadDetailPage() {
   const fetchLead = async () => {
     try {
       setLoading(true)
+      setError(null)
       const response = await fetch(`/api/leads/${leadId}`)
+      
+      if (!response.ok) {
+        throw new Error(`Failed to fetch lead: ${response.status} ${response.statusText}`)
+      }
+      
       const data = await response.json()
-      if (data.success) {
+      
+      if (data.success && data.data) {
         setLead(data.data)
+      } else {
+        throw new Error(data.error || 'Failed to fetch lead')
       }
     } catch (error) {
       console.error('Error fetching lead:', error)
+      setError(error instanceof Error ? error.message : 'Failed to fetch lead')
     } finally {
       setLoading(false)
     }
@@ -113,22 +123,31 @@ export default function LeadDetailPage() {
   const handleGenerateMessage = async () => {
     try {
       setGeneratingMessage(true)
+      setError(null)
       const response = await fetch(`/api/leads/${leadId}/message`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ model: 'grok-3' }),
       })
+      
+      if (!response.ok) {
+        const errorData = await response.json().catch(() => ({}))
+        throw new Error(errorData.error || `Failed to generate message: ${response.status}`)
+      }
+      
       const data = await response.json()
-      if (data.success) {
+      if (data.success && data.data?.outreach) {
         setGeneratedMessage(data.data.outreach)
         setShowMessageModal(true)
         await fetchLead()
       } else {
-        alert(`Error: ${data.error}`)
+        throw new Error(data.error || 'Failed to generate message')
       }
     } catch (error) {
       console.error('Error generating message:', error)
-      alert('Failed to generate message')
+      const errorMessage = error instanceof Error ? error.message : 'Failed to generate message'
+      setError(errorMessage)
+      alert(`Error: ${errorMessage}`)
     } finally {
       setGeneratingMessage(false)
     }

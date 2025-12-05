@@ -46,13 +46,21 @@ export default function LeadsPage() {
       if (filterStage) params.append('stage', filterStage)
       
       const response = await fetch(`/api/leads?${params}`)
+      
+      if (!response.ok) {
+        throw new Error(`Failed to fetch leads: ${response.status} ${response.statusText}`)
+      }
+      
       const data = await response.json()
       
-      if (data.success) {
+      if (data.success && data.data) {
         setLeads(data.data)
+      } else {
+        throw new Error(data.error || 'Failed to fetch leads')
       }
     } catch (error) {
       console.error('Error fetching leads:', error)
+      // Could add error state display here
     } finally {
       setLoading(false)
     }
@@ -70,13 +78,21 @@ export default function LeadsPage() {
       if (filterStage) params.append('stage', filterStage)
       
       const response = await fetch(`/api/search?${params}`)
+      
+      if (!response.ok) {
+        throw new Error(`Search failed: ${response.status} ${response.statusText}`)
+      }
+      
       const data = await response.json()
       
-      if (data.success) {
+      if (data.success && data.data) {
         setLeads(data.data)
+      } else {
+        throw new Error(data.error || 'Search failed')
       }
     } catch (error) {
       console.error('Error searching:', error)
+      // Could add error state display here
     } finally {
       setLoading(false)
     }
