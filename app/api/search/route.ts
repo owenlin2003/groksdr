@@ -115,14 +115,19 @@ export async function GET(request: NextRequest) {
     const resultsWithRelevance = filteredLeads.map((lead) => {
       let relevanceScore = 0
 
+      // Name match (highest priority)
+      if (lead.name.toLowerCase().includes(searchTerm)) {
+        relevanceScore += 5
+      }
+
+      // Email match
+      if (lead.email.toLowerCase().includes(searchTerm)) {
+        relevanceScore += 4
+      }
+
       // Company match
       if (lead.company.toLowerCase().includes(searchTerm)) {
         relevanceScore += 3
-      }
-
-      // Name match
-      if (lead.name.toLowerCase().includes(searchTerm)) {
-        relevanceScore += 2
       }
 
       // Notes match
