@@ -59,7 +59,8 @@ export default function RootLayout({
                     </Link>
                   </div>
                 </div>
-                <div className="flex items-center">
+                <div className="flex items-center gap-2">
+                  <span className="text-sm text-gray-600">powered by:</span>
                   <img
                     src="/images.png"
                     alt="Grok Logo"
