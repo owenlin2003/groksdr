@@ -58,18 +58,25 @@ export default function EvaluationPage() {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ saveToDatabase: true }),
       })
+      
+      if (!response.ok) {
+        const errorData = await response.json().catch(() => ({}))
+        throw new Error(errorData.error || `Failed to run evaluation: ${response.status}`)
+      }
+      
       const data = await response.json()
       if (data.success) {
-        if (data.data.completedAt) {
+        if (data.data?.completedAt) {
           setCompletedAt(data.data.completedAt)
         }
         await fetchMetrics()
       } else {
-        alert(`Error: ${data.error}`)
+        throw new Error(data.error || 'Failed to run evaluation')
       }
     } catch (error) {
       console.error('Error running evaluation:', error)
-      alert('Failed to run evaluation')
+      const errorMessage = error instanceof Error ? error.message : 'Failed to run evaluation'
+      alert(`Error: ${errorMessage}`)
     } finally {
       setRunning(false)
     }

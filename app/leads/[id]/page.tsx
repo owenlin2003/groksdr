@@ -157,21 +157,30 @@ export default function LeadDetailPage() {
     if (!newStage) return
 
     try {
+      setError(null)
       const response = await fetch(`/api/leads/${leadId}/stage`, {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ stage: newStage }),
       })
+      
+      if (!response.ok) {
+        const errorData = await response.json().catch(() => ({}))
+        throw new Error(errorData.error || `Failed to update stage: ${response.status}`)
+      }
+      
       const data = await response.json()
       if (data.success) {
         await fetchLead()
         setNewStage('')
       } else {
-        alert(`Error: ${data.error}`)
+        throw new Error(data.error || 'Failed to update stage')
       }
     } catch (error) {
       console.error('Error updating stage:', error)
-      alert('Failed to update stage')
+      const errorMessage = error instanceof Error ? error.message : 'Failed to update stage'
+      setError(errorMessage)
+      alert(`Error: ${errorMessage}`)
     }
   }
 
