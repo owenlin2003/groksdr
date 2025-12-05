@@ -35,15 +35,31 @@ export function calculateVariance(scores: number[]): number {
 }
 
 /**
- * Calculate score consistency (inverse of variance, normalized)
+ * Calculate score consistency using coefficient of variation
+ * Lower variation = higher consistency (0-100 scale)
  */
 export function calculateConsistency(scores: number[]): number {
   if (scores.length === 0) return 0
+  if (scores.length === 1) return 100 // Perfect consistency with only one score
   
+  const mean = scores.reduce((sum, score) => sum + score, 0) / scores.length
+  
+  // Avoid division by zero
+  if (mean === 0) return 0
+  
+  // Calculate standard deviation
   const variance = calculateVariance(scores)
-  // Normalize consistency: lower variance = higher consistency
-  // Scale to 0-100 range
-  const consistency = Math.max(0, 100 - (variance / 10))
+  const standardDeviation = Math.sqrt(variance)
+  
+  // Coefficient of variation (CV) = standard deviation / mean
+  // Lower CV = more consistent
+  const coefficientOfVariation = standardDeviation / mean
+  
+  // Convert CV to consistency score (0-100)
+  // CV of 0 = 100% consistency, CV of 0.5+ = low consistency
+  // Use inverse relationship: consistency = 100 * (1 - min(CV, 1))
+  // Cap CV at 1.0 to prevent negative consistency
+  const consistency = Math.max(0, Math.min(100, 100 * (1 - Math.min(coefficientOfVariation, 1))))
   
   return Math.round(consistency * 100) / 100
 }
@@ -184,9 +200,8 @@ function generateRecommendations(metrics: ModelMetrics[]): string[] {
   const slowest = sortedBySpeed[sortedBySpeed.length - 1]
 
   if (fastest && slowest && fastest.averageResponseTime < slowest.averageResponseTime * 0.7) {
-    const speedup = (slowest.averageResponseTime / fastest.averageResponseTime).toFixed(1)
     recommendations.push(
-      `Use ${fastest.modelVariant} for bulk scoring - ${speedup}x faster (${fastest.averageResponseTime}ms vs ${slowest.averageResponseTime}ms)`
+      `Consider using ${fastest.modelVariant} for faster responses (${fastest.averageResponseTime}ms vs ${slowest.averageResponseTime}ms average)`
     )
   }
 
@@ -203,7 +218,7 @@ function generateRecommendations(metrics: ModelMetrics[]): string[] {
     mostConsistent.scoreConsistency > leastConsistent.scoreConsistency + 10
   ) {
     recommendations.push(
-      `Use ${mostConsistent.modelVariant} for reliable scoring - ${mostConsistent.scoreConsistency}% consistency vs ${leastConsistent.scoreConsistency}%`
+      `${mostConsistent.modelVariant} shows higher score consistency (${mostConsistent.scoreConsistency}%) compared to ${leastConsistent.modelVariant} (${leastConsistent.scoreConsistency}%). Consider using ${mostConsistent.modelVariant} for more reliable scoring.`
     )
   }
 
@@ -213,11 +228,11 @@ function generateRecommendations(metrics: ModelMetrics[]): string[] {
 
   if (mostAccurate && mostAccurate.accuracy < 70) {
     recommendations.push(
-      `Refine prompt - accuracy ${mostAccurate.accuracy.toFixed(1)}% below target (70%+)`
+      `Overall accuracy is ${mostAccurate.accuracy.toFixed(1)}%. Consider refining the qualification prompt to better align with expected score ranges.`
     )
   } else if (mostAccurate && mostAccurate.accuracy >= 70) {
     recommendations.push(
-      `Use ${mostAccurate.modelVariant} for production - best accuracy (${mostAccurate.accuracy.toFixed(1)}%)`
+      `${mostAccurate.modelVariant} shows the best accuracy (${mostAccurate.accuracy.toFixed(1)}%). Consider using this model for production.`
     )
   }
 
@@ -225,7 +240,7 @@ function generateRecommendations(metrics: ModelMetrics[]): string[] {
   for (const metric of metrics) {
     if (metric.scoreVariance > 400) {
       recommendations.push(
-        `Add scoring criteria to ${metric.modelVariant} - variance ${metric.scoreVariance.toFixed(0)} too high`
+        `${metric.modelVariant} shows high score variance (${metric.scoreVariance}). Consider adding more specific scoring criteria to the prompt for consistency.`
       )
     }
   }
@@ -234,7 +249,7 @@ function generateRecommendations(metrics: ModelMetrics[]): string[] {
   for (const metric of metrics) {
     if (metric.failedEvaluations > 0) {
       recommendations.push(
-        `Fix ${metric.modelVariant} - ${metric.failedEvaluations} failed evaluation${metric.failedEvaluations > 1 ? 's' : ''}`
+        `${metric.modelVariant} had ${metric.failedEvaluations} failed evaluations. Review error logs and consider improving error handling.`
       )
     }
   }
