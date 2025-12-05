@@ -25,6 +25,7 @@ export default function EvaluationPage() {
   const [metrics, setMetrics] = useState<EvaluationMetrics | null>(null)
   const [loading, setLoading] = useState(true)
   const [running, setRunning] = useState(false)
+  const [statusMessage, setStatusMessage] = useState<string | null>(null)
 
   useEffect(() => {
     fetchMetrics()
@@ -48,20 +49,43 @@ export default function EvaluationPage() {
   const handleRunEvaluation = async () => {
     try {
       setRunning(true)
+      setStatusMessage('Starting evaluation... This will test 3 AI models with 10 sample leads (about 1-2 minutes)')
+      
+      // Use AbortController for timeout handling
+      const controller = new AbortController()
+      const timeoutId = setTimeout(() => {
+        controller.abort()
+      }, 180000) // 3 minute timeout
+      
       const response = await fetch('/api/evaluation', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ saveToDatabase: true }),
+        signal: controller.signal,
       })
+      
+      clearTimeout(timeoutId)
+      
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`)
+      }
+      
       const data = await response.json()
       if (data.success) {
+        setStatusMessage(`Evaluation complete! Tested ${data.data.summary?.totalTests || 0} leads successfully.`)
         await fetchMetrics()
+        // Clear status message after 5 seconds
+        setTimeout(() => setStatusMessage(null), 5000)
       } else {
-        alert(`Error: ${data.error}`)
+        setStatusMessage(`Error: ${data.error || 'Unknown error occurred'}`)
       }
-    } catch (error) {
+    } catch (error: any) {
       console.error('Error running evaluation:', error)
-      alert('Failed to run evaluation')
+      if (error.name === 'AbortError') {
+        setStatusMessage('Evaluation timed out. This can happen if the API is slow. Please try again or check your API key.')
+      } else {
+        setStatusMessage(`Failed to run evaluation: ${error.message || 'Network error'}`)
+      }
     } finally {
       setRunning(false)
     }
@@ -129,11 +153,35 @@ export default function EvaluationPage() {
         </button>
       </div>
 
-      {running && (
-        <div className="mb-6 bg-blue-50 border border-blue-200 rounded-lg p-4">
-          <p className="text-base text-blue-800">
-            Testing all AI models with sample leads. This will take about 30 seconds...
-          </p>
+      {(running || statusMessage) && (
+        <div className={`mb-6 rounded-lg p-4 ${
+          running 
+            ? 'bg-blue-50 border border-blue-200' 
+            : statusMessage?.includes('Error') || statusMessage?.includes('Failed')
+            ? 'bg-red-50 border border-red-200'
+            : 'bg-green-50 border border-green-200'
+        }`}>
+          <div className="flex items-start gap-3">
+            {running && (
+              <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-blue-600 mt-0.5"></div>
+            )}
+            <div className="flex-1">
+              <p className={`text-base font-medium ${
+                running 
+                  ? 'text-blue-800' 
+                  : statusMessage?.includes('Error') || statusMessage?.includes('Failed')
+                  ? 'text-red-800'
+                  : 'text-green-800'
+              }`}>
+                {statusMessage || 'Testing all AI models with sample leads. This will take about 1-2 minutes...'}
+              </p>
+              {running && (
+                <p className="text-sm text-blue-600 mt-2">
+                  Please wait while we test each model. This process cannot be interrupted.
+                </p>
+              )}
+            </div>
+          </div>
         </div>
       )}
 
