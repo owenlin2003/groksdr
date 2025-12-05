@@ -73,10 +73,13 @@ export default function PipelinePage() {
   }
 
   return (
-    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-      <h1 className="text-4xl font-bold text-gray-900 mb-6">Pipeline</h1>
+    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
+      <div className="mb-8">
+        <h1 className="text-4xl font-bold text-gray-900 mb-2">Pipeline</h1>
+        <p className="text-base text-gray-600">Manage your leads across sales stages</p>
+      </div>
 
-      <div className="grid grid-cols-4 gap-4">
+      <div className="grid grid-cols-4 gap-5">
         {stages.map((stage) => {
           const stageLeads = getLeadsForStage(stage.name)
           const isClosed = stage.name === 'Closed'
@@ -85,22 +88,22 @@ export default function PipelinePage() {
           return (
             <div
               key={stage.id}
-              className={`bg-white rounded-lg border border-gray-200 p-5 shadow-sm ${isCollapsed ? 'col-span-1' : ''}`}
+              className={`bg-white rounded-xl border border-gray-200 shadow-sm hover:shadow-md transition-shadow duration-200 ${isCollapsed ? 'col-span-1' : ''}`}
             >
-              <div className="mb-4 pb-4 border-b border-gray-200">
-                <div className="flex items-center justify-between mb-2">
+              <div className="p-6 border-b border-gray-100">
+                <div className="flex items-center justify-between mb-3">
                   <div className="flex items-center gap-2">
-                    <h2 className="text-xl font-semibold text-gray-900">
+                    <h2 className="text-lg font-bold text-gray-900">
                       {stage.name}
                     </h2>
                     {isClosed && (
                       <button
                         onClick={() => setClosedCollapsed(!closedCollapsed)}
-                        className="text-gray-400 hover:text-gray-600 transition-colors"
+                        className="text-gray-400 hover:text-gray-600 transition-colors p-1"
                         title={closedCollapsed ? 'Expand' : 'Collapse'}
                       >
                         <svg
-                          className={`w-5 h-5 transition-transform ${closedCollapsed ? '' : 'rotate-180'}`}
+                          className={`w-4 h-4 transition-transform duration-200 ${closedCollapsed ? '' : 'rotate-180'}`}
                           fill="none"
                           stroke="currentColor"
                           viewBox="0 0 24 24"
@@ -110,28 +113,28 @@ export default function PipelinePage() {
                       </button>
                     )}
                   </div>
-                  <span className="inline-flex items-center justify-center w-8 h-8 rounded-full bg-gray-100 text-gray-700 font-semibold text-sm">
+                  <span className="inline-flex items-center justify-center min-w-[2rem] h-8 px-2 rounded-full bg-gray-100 text-gray-700 font-semibold text-sm">
                     {stageLeads.length}
                   </span>
                 </div>
                 {stage.description && (
-                  <p className="text-sm text-gray-500">{stage.description}</p>
+                  <p className="text-sm text-gray-500 leading-relaxed">{stage.description}</p>
                 )}
               </div>
 
               {!isCollapsed ? (
-                <div className="space-y-3">
+                <div className="p-5 space-y-3 min-h-[200px]">
                   {stageLeads.map((lead) => (
                     <Link
                       key={lead.id}
                       href={`/leads/${lead.id}`}
-                      className="block p-4 bg-gray-50 rounded-lg border border-gray-200 hover:bg-gray-100 transition-colors"
+                      className="block p-4 bg-gray-50 rounded-lg border border-gray-200 hover:bg-white hover:border-gray-300 hover:shadow-sm transition-all duration-150 group"
                     >
-                      <p className="text-base font-medium text-gray-900 mb-1">{lead.name}</p>
-                      <p className="text-sm text-gray-600 mb-2">{lead.company}</p>
+                      <p className="text-base font-semibold text-gray-900 mb-1 group-hover:text-blue-600 transition-colors">{lead.name}</p>
+                      <p className="text-sm text-gray-600 mb-3">{lead.company}</p>
                       {lead.score !== null && (
                         <span
-                          className={`inline-flex items-center px-2 py-1 rounded text-xs font-medium ${getScoreColor(lead.score)}`}
+                          className={`inline-flex items-center px-2.5 py-1 rounded-md text-xs font-semibold ${getScoreColor(lead.score)}`}
                         >
                           Score: {lead.score}
                         </span>
@@ -139,9 +142,9 @@ export default function PipelinePage() {
                     </Link>
                   ))}
                   {stageLeads.length === 0 && (
-                    <div className="text-center py-8">
+                    <div className="text-center py-12">
                       <svg
-                        className="mx-auto h-12 w-12 text-gray-400"
+                        className="mx-auto h-14 w-14 text-gray-300"
                         fill="none"
                         viewBox="0 0 24 24"
                         stroke="currentColor"
@@ -149,20 +152,20 @@ export default function PipelinePage() {
                         <path
                           strokeLinecap="round"
                           strokeLinejoin="round"
-                          strokeWidth={2}
+                          strokeWidth={1.5}
                           d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"
                         />
                       </svg>
-                      <p className="text-sm text-gray-400 mt-2">No leads in this stage</p>
+                      <p className="text-sm text-gray-400 mt-3 font-medium">No leads in this stage</p>
                     </div>
                   )}
                 </div>
               ) : (
-                <div className="text-center py-4">
-                  <p className="text-sm text-gray-500">
+                <div className="text-center py-6">
+                  <p className="text-base font-semibold text-gray-700">
                     {stageLeads.length} {stageLeads.length === 1 ? 'lead' : 'leads'}
                   </p>
-                  <p className="text-xs text-gray-400 mt-1">Click arrow to expand</p>
+                  <p className="text-xs text-gray-400 mt-2">Click arrow to expand</p>
                 </div>
               )}
             </div>
