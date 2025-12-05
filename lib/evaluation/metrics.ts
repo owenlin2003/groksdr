@@ -184,8 +184,9 @@ function generateRecommendations(metrics: ModelMetrics[]): string[] {
   const slowest = sortedBySpeed[sortedBySpeed.length - 1]
 
   if (fastest && slowest && fastest.averageResponseTime < slowest.averageResponseTime * 0.7) {
+    const speedup = (slowest.averageResponseTime / fastest.averageResponseTime).toFixed(1)
     recommendations.push(
-      `Consider using ${fastest.modelVariant} for faster responses (${fastest.averageResponseTime}ms vs ${slowest.averageResponseTime}ms average)`
+      `Use ${fastest.modelVariant} for bulk scoring - ${speedup}x faster (${fastest.averageResponseTime}ms vs ${slowest.averageResponseTime}ms)`
     )
   }
 
@@ -202,7 +203,7 @@ function generateRecommendations(metrics: ModelMetrics[]): string[] {
     mostConsistent.scoreConsistency > leastConsistent.scoreConsistency + 10
   ) {
     recommendations.push(
-      `${mostConsistent.modelVariant} shows higher score consistency (${mostConsistent.scoreConsistency}%) compared to ${leastConsistent.modelVariant} (${leastConsistent.scoreConsistency}%). Consider using ${mostConsistent.modelVariant} for more reliable scoring.`
+      `Use ${mostConsistent.modelVariant} for reliable scoring - ${mostConsistent.scoreConsistency}% consistency vs ${leastConsistent.scoreConsistency}%`
     )
   }
 
@@ -212,11 +213,11 @@ function generateRecommendations(metrics: ModelMetrics[]): string[] {
 
   if (mostAccurate && mostAccurate.accuracy < 70) {
     recommendations.push(
-      `Overall accuracy is ${mostAccurate.accuracy.toFixed(1)}%. Consider refining the qualification prompt to better align with expected score ranges.`
+      `Refine prompt - accuracy ${mostAccurate.accuracy.toFixed(1)}% below target (70%+)`
     )
   } else if (mostAccurate && mostAccurate.accuracy >= 70) {
     recommendations.push(
-      `${mostAccurate.modelVariant} shows the best accuracy (${mostAccurate.accuracy.toFixed(1)}%). Consider using this model for production.`
+      `Use ${mostAccurate.modelVariant} for production - best accuracy (${mostAccurate.accuracy.toFixed(1)}%)`
     )
   }
 
@@ -224,7 +225,7 @@ function generateRecommendations(metrics: ModelMetrics[]): string[] {
   for (const metric of metrics) {
     if (metric.scoreVariance > 400) {
       recommendations.push(
-        `${metric.modelVariant} shows high score variance (${metric.scoreVariance}). Consider adding more specific scoring criteria to the prompt for consistency.`
+        `Add scoring criteria to ${metric.modelVariant} - variance ${metric.scoreVariance.toFixed(0)} too high`
       )
     }
   }
@@ -233,7 +234,7 @@ function generateRecommendations(metrics: ModelMetrics[]): string[] {
   for (const metric of metrics) {
     if (metric.failedEvaluations > 0) {
       recommendations.push(
-        `${metric.modelVariant} had ${metric.failedEvaluations} failed evaluations. Review error logs and consider improving error handling.`
+        `Fix ${metric.modelVariant} - ${metric.failedEvaluations} failed evaluation${metric.failedEvaluations > 1 ? 's' : ''}`
       )
     }
   }

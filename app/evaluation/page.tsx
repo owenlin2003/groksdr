@@ -26,6 +26,25 @@ export default function EvaluationPage() {
   const [loading, setLoading] = useState(true)
   const [running, setRunning] = useState(false)
 
+  const getWinners = () => {
+    if (!metrics || metrics.models.length === 0) return null
+    
+    const fastest = metrics.models.reduce((prev, curr) => 
+      curr.averageResponseTime < prev.averageResponseTime ? curr : prev
+    )
+    const highestScore = metrics.models.reduce((prev, curr) => 
+      curr.averageScore > prev.averageScore ? curr : prev
+    )
+    const mostAccurate = metrics.models.reduce((prev, curr) => 
+      curr.accuracy > prev.accuracy ? curr : prev
+    )
+    const mostConsistent = metrics.models.reduce((prev, curr) => 
+      curr.scoreConsistency > prev.scoreConsistency ? curr : prev
+    )
+    
+    return { fastest, highestScore, mostAccurate, mostConsistent }
+  }
+
   useEffect(() => {
     fetchMetrics()
   }, [])
@@ -96,20 +115,35 @@ export default function EvaluationPage() {
         </div>
       )}
 
-      {metrics && (
+      {metrics && (() => {
+        const winners = getWinners()
+        return (
         <>
           <div className="mb-8 grid grid-cols-1 md:grid-cols-2 gap-4">
-            <div className="bg-white rounded-lg shadow p-6">
+            <div className="bg-white rounded-lg shadow p-6 border-2 border-transparent hover:border-blue-200 transition-colors">
               <h3 className="text-base font-medium text-gray-500">Overall Average Response Time</h3>
-              <p className="mt-2 text-4xl font-semibold text-gray-900">
-                {metrics.overallAverageResponseTime}ms
+              <p className="mt-2 text-5xl font-bold text-gray-900">
+                {metrics.overallAverageResponseTime.toLocaleString()}ms
               </p>
+              {winners && (
+                <p className="mt-2 text-sm text-gray-600">
+                  Fastest: <span className="font-semibold text-green-600">{winners.fastest.modelVariant}</span> ({winners.fastest.averageResponseTime.toLocaleString()}ms)
+                </p>
+              )}
             </div>
-            <div className="bg-white rounded-lg shadow p-6">
+            <div className="bg-white rounded-lg shadow p-6 border-2 border-transparent hover:border-blue-200 transition-colors">
               <h3 className="text-base font-medium text-gray-500">Overall Accuracy</h3>
-              <p className="mt-2 text-4xl font-semibold text-gray-900">
+              <p className="mt-2 text-5xl font-bold text-gray-900">
                 {metrics.overallAccuracy.toFixed(1)}%
               </p>
+              <p className="mt-2 text-sm text-gray-600">
+                Percentage of scores within expected range for test leads
+              </p>
+              {winners && (
+                <p className="mt-1 text-sm text-gray-600">
+                  Best: <span className="font-semibold text-green-600">{winners.mostAccurate.modelVariant}</span> ({winners.mostAccurate.accuracy.toFixed(1)}%)
+                </p>
+              )}
             </div>
           </div>
 
@@ -142,31 +176,70 @@ export default function EvaluationPage() {
                   </tr>
                 </thead>
                 <tbody className="bg-white divide-y divide-gray-200">
-                  {metrics.models.map((model) => (
-                    <tr key={model.modelVariant}>
-                      <td className="px-6 py-4 whitespace-nowrap text-base font-medium text-gray-900">
-                        {model.modelVariant}
-                      </td>
-                      <td className="px-6 py-4 whitespace-nowrap text-base text-gray-500">
-                        {model.averageResponseTime}ms
-                      </td>
-                      <td className="px-6 py-4 whitespace-nowrap text-base text-gray-500">
-                        {model.averageScore.toFixed(1)}
-                      </td>
-                      <td className="px-6 py-4 whitespace-nowrap text-base text-gray-500">
-                        {model.scoreConsistency.toFixed(1)}%
-                      </td>
-                      <td className="px-6 py-4 whitespace-nowrap text-base text-gray-500">
-                        {model.accuracy.toFixed(1)}%
-                      </td>
-                      <td className="px-6 py-4 whitespace-nowrap text-base text-gray-500">
-                        {model.totalEvaluations > 0
-                          ? ((model.successfulEvaluations / model.totalEvaluations) * 100).toFixed(1)
-                          : 0}
-                        %
-                      </td>
-                    </tr>
-                  ))}
+                  {metrics.models.map((model) => {
+                    const winners = getWinners()
+                    const isFastest = winners?.fastest.modelVariant === model.modelVariant
+                    const isHighestScore = winners?.highestScore.modelVariant === model.modelVariant
+                    const isMostAccurate = winners?.mostAccurate.modelVariant === model.modelVariant
+                    const isMostConsistent = winners?.mostConsistent.modelVariant === model.modelVariant
+                    const hasWinner = isFastest || isHighestScore || isMostAccurate || isMostConsistent
+                    
+                    return (
+                      <tr 
+                        key={model.modelVariant}
+                        className={hasWinner ? 'bg-green-50 border-l-4 border-l-green-500' : ''}
+                      >
+                        <td className="px-6 py-4 whitespace-nowrap">
+                          <div className="flex items-center gap-2">
+                            <span className="text-base font-medium text-gray-900">{model.modelVariant}</span>
+                            {hasWinner && (
+                              <span className="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-green-100 text-green-800">
+                                Winner
+                              </span>
+                            )}
+                          </div>
+                        </td>
+                        <td className="px-6 py-4 whitespace-nowrap">
+                          <div className="flex items-center gap-2">
+                            <span className={`text-lg font-semibold ${isFastest ? 'text-green-600' : 'text-gray-900'}`}>
+                              {model.averageResponseTime.toLocaleString()}ms
+                            </span>
+                            {isFastest && <span className="text-xs text-green-600 font-medium">Fastest</span>}
+                          </div>
+                        </td>
+                        <td className="px-6 py-4 whitespace-nowrap">
+                          <div className="flex items-center gap-2">
+                            <span className={`text-lg font-semibold ${isHighestScore ? 'text-green-600' : 'text-gray-900'}`}>
+                              {model.averageScore.toFixed(1)}
+                            </span>
+                            {isHighestScore && <span className="text-xs text-green-600 font-medium">Highest</span>}
+                          </div>
+                        </td>
+                        <td className="px-6 py-4 whitespace-nowrap">
+                          <div className="flex items-center gap-2">
+                            <span className={`text-lg font-semibold ${isMostConsistent ? 'text-green-600' : 'text-gray-900'}`}>
+                              {model.scoreConsistency.toFixed(1)}%
+                            </span>
+                            {isMostConsistent && <span className="text-xs text-green-600 font-medium">Most Consistent</span>}
+                          </div>
+                        </td>
+                        <td className="px-6 py-4 whitespace-nowrap">
+                          <div className="flex items-center gap-2">
+                            <span className={`text-lg font-semibold ${isMostAccurate ? 'text-green-600' : 'text-gray-900'}`}>
+                              {model.accuracy.toFixed(1)}%
+                            </span>
+                            {isMostAccurate && <span className="text-xs text-green-600 font-medium">Most Accurate</span>}
+                          </div>
+                        </td>
+                        <td className="px-6 py-4 whitespace-nowrap text-base text-gray-500">
+                          {model.totalEvaluations > 0
+                            ? ((model.successfulEvaluations / model.totalEvaluations) * 100).toFixed(1)
+                            : 0}
+                          %
+                        </td>
+                      </tr>
+                    )
+                  })}
                 </tbody>
               </table>
             </div>
@@ -185,7 +258,8 @@ export default function EvaluationPage() {
             </div>
           )}
         </>
-      )}
+        )
+      })()}
     </div>
   )
 }
