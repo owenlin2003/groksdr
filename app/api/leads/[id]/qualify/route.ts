@@ -82,17 +82,24 @@ export async function POST(
       },
     })
 
-    // Build description with custom criteria mention if used
-    const criteriaNote = criteria && scoringCriteria 
-      ? ` (using custom criteria: Company Size ${Math.round(criteria.companySizeWeight * 5)}/5, Budget ${Math.round(criteria.budgetSignalsWeight * 5)}/5, Decision Maker ${Math.round(criteria.decisionMakerWeight * 5)}/5, Industry ${Math.round(criteria.industryMatchWeight * 5)}/5)`
+    // Build simple, readable description
+    const statusLabel = qualification.qualificationStatus === 'qualified' ? 'Qualified' 
+      : qualification.qualificationStatus === 'maybe' ? 'Maybe Qualified'
+      : 'Not Qualified'
+    
+    const customCriteriaNote = criteria && scoringCriteria 
+      ? ' (custom scoring used)'
       : ''
+    
+    // Create clean, readable description
+    const description = `Score: ${qualification.score}/100 - ${statusLabel}${customCriteriaNote}`
     
     // Log activity with full details
     await prisma.activity.create({
       data: {
         leadId: lead.id,
         type: 'qualification',
-        description: `Lead qualified with score ${qualification.score}${criteriaNote}: ${qualification.reasoning}`,
+        description,
         timestamp: new Date(),
         grokResponse: JSON.stringify(qualification),
         modelUsed: model,
