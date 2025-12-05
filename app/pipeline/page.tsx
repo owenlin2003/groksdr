@@ -127,7 +127,7 @@ export default function PipelinePage() {
                   {stageLeads.map((lead) => (
                     <Link
                       key={lead.id}
-                      href={`/leads/${lead.id}`}
+                      href={`/leads/${lead.id}?from=pipeline`}
                       className="block p-4 bg-gray-50 rounded-lg border border-gray-200 hover:bg-white hover:border-gray-300 hover:shadow-sm transition-all duration-150 group"
                     >
                       <p className="text-base font-semibold text-gray-900 mb-1 group-hover:text-blue-600 transition-colors">{lead.name}</p>

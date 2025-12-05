@@ -40,10 +40,12 @@ export default function LeadDetailPage() {
   const [cameFromPipeline, setCameFromPipeline] = useState(false)
 
   useEffect(() => {
-    // Check if user came from pipeline page
+    // Check if user came from pipeline page via query param or referrer
     if (typeof window !== 'undefined') {
+      const searchParams = new URLSearchParams(window.location.search)
+      const fromParam = searchParams.get('from')
       const referrer = document.referrer
-      setCameFromPipeline(referrer.includes('/pipeline'))
+      setCameFromPipeline(fromParam === 'pipeline' || referrer.includes('/pipeline'))
     }
   }, [])
   const [qualifying, setQualifying] = useState(false)
