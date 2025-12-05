@@ -23,6 +23,7 @@ export default function PipelinePage() {
   const [stages, setStages] = useState<PipelineStage[]>([])
   const [leads, setLeads] = useState<Lead[]>([])
   const [loading, setLoading] = useState(true)
+  const [closedCollapsed, setClosedCollapsed] = useState(true)
 
   useEffect(() => {
     fetchPipeline()
@@ -78,16 +79,37 @@ export default function PipelinePage() {
       <div className="grid grid-cols-4 gap-4">
         {stages.map((stage) => {
           const stageLeads = getLeadsForStage(stage.name)
+          const isClosed = stage.name === 'Closed'
+          const isCollapsed = isClosed && closedCollapsed
+          
           return (
             <div
               key={stage.id}
-              className="bg-white rounded-lg border border-gray-200 p-5 shadow-sm"
+              className={`bg-white rounded-lg border border-gray-200 p-5 shadow-sm ${isCollapsed ? 'col-span-1' : ''}`}
             >
               <div className="mb-4 pb-4 border-b border-gray-200">
                 <div className="flex items-center justify-between mb-2">
-                  <h2 className="text-xl font-semibold text-gray-900">
-                    {stage.name}
-                  </h2>
+                  <div className="flex items-center gap-2">
+                    <h2 className="text-xl font-semibold text-gray-900">
+                      {stage.name}
+                    </h2>
+                    {isClosed && (
+                      <button
+                        onClick={() => setClosedCollapsed(!closedCollapsed)}
+                        className="text-gray-400 hover:text-gray-600 transition-colors"
+                        title={closedCollapsed ? 'Expand' : 'Collapse'}
+                      >
+                        <svg
+                          className={`w-5 h-5 transition-transform ${closedCollapsed ? '' : 'rotate-180'}`}
+                          fill="none"
+                          stroke="currentColor"
+                          viewBox="0 0 24 24"
+                        >
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+                        </svg>
+                      </button>
+                    )}
+                  </div>
                   <span className="inline-flex items-center justify-center w-8 h-8 rounded-full bg-gray-100 text-gray-700 font-semibold text-sm">
                     {stageLeads.length}
                   </span>
@@ -97,30 +119,39 @@ export default function PipelinePage() {
                 )}
               </div>
 
-              <div className="space-y-3">
-                {stageLeads.map((lead) => (
-                  <Link
-                    key={lead.id}
-                    href={`/leads/${lead.id}`}
-                    className="block p-4 bg-gray-50 rounded-lg border border-gray-200 hover:bg-gray-100 transition-colors"
-                  >
-                    <p className="text-base font-medium text-gray-900 mb-1">{lead.name}</p>
-                    <p className="text-sm text-gray-600 mb-2">{lead.company}</p>
-                    {lead.score !== null && (
-                      <span
-                        className={`inline-flex items-center px-2 py-1 rounded text-xs font-medium ${getScoreColor(lead.score)}`}
-                      >
-                        Score: {lead.score}
-                      </span>
-                    )}
-                  </Link>
-                ))}
-                {stageLeads.length === 0 && (
-                  <p className="text-sm text-gray-400 text-center py-8">
-                    No leads in this stage
+              {!isCollapsed ? (
+                <div className="space-y-3">
+                  {stageLeads.map((lead) => (
+                    <Link
+                      key={lead.id}
+                      href={`/leads/${lead.id}`}
+                      className="block p-4 bg-gray-50 rounded-lg border border-gray-200 hover:bg-gray-100 transition-colors"
+                    >
+                      <p className="text-base font-medium text-gray-900 mb-1">{lead.name}</p>
+                      <p className="text-sm text-gray-600 mb-2">{lead.company}</p>
+                      {lead.score !== null && (
+                        <span
+                          className={`inline-flex items-center px-2 py-1 rounded text-xs font-medium ${getScoreColor(lead.score)}`}
+                        >
+                          Score: {lead.score}
+                        </span>
+                      )}
+                    </Link>
+                  ))}
+                  {stageLeads.length === 0 && (
+                    <p className="text-sm text-gray-400 text-center py-8">
+                      No leads in this stage
+                    </p>
+                  )}
+                </div>
+              ) : (
+                <div className="text-center py-4">
+                  <p className="text-sm text-gray-500">
+                    {stageLeads.length} {stageLeads.length === 1 ? 'lead' : 'leads'}
                   </p>
-                )}
-              </div>
+                  <p className="text-xs text-gray-400 mt-1">Click arrow to expand</p>
+                </div>
+              )}
             </div>
           )
         })}
