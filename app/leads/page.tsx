@@ -125,61 +125,6 @@ export default function LeadsPage() {
 
   const sortedLeads = sortLeads(leads)
 
-  const exportToCSV = () => {
-    if (sortedLeads.length === 0) {
-      alert('No leads to export')
-      return
-    }
-
-    // CSV headers - only what sales reps need
-    const headers = [
-      'Name',
-      'Email',
-      'Company',
-      'Score',
-      'Stage',
-      'Notes',
-      'Last Activity',
-      'Created Date'
-    ]
-
-    // Build each row
-    const rows = sortedLeads.map(lead => {
-      const lastActivity = getLastActivity(lead)
-      const lastActivityText = lastActivity 
-        ? `${getActivityShortDescription(lastActivity)} - ${formatTimeAgo(lastActivity.timestamp)}`
-        : 'No activity'
-      
-      return [
-        lead.name || '',
-        lead.email || '',
-        lead.company || '',
-        lead.score !== null ? lead.score.toString() : 'N/A',
-        lead.stage || '',
-        lead.notes || '',
-        lastActivityText,
-        new Date(lead.createdAt).toLocaleDateString()
-      ]
-    })
-
-    // Combine headers and rows
-    const csvContent = [
-      headers.join(','),
-      ...rows.map(row => row.map(cell => `"${String(cell).replace(/"/g, '""')}"`).join(','))
-    ].join('\n')
-
-    // Create blob and download
-    const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' })
-    const link = document.createElement('a')
-    const url = URL.createObjectURL(blob)
-    link.setAttribute('href', url)
-    link.setAttribute('download', `leads_export_${new Date().toISOString().split('T')[0]}.csv`)
-    link.style.visibility = 'hidden'
-    document.body.appendChild(link)
-    link.click()
-    document.body.removeChild(link)
-  }
-
   const formatTimeAgo = (timestamp: string) => {
     const now = new Date()
     const time = new Date(timestamp)
@@ -270,6 +215,61 @@ export default function LeadsPage() {
     }
 
     return null
+  }
+
+  const exportToCSV = () => {
+    if (sortedLeads.length === 0) {
+      alert('No leads to export')
+      return
+    }
+
+    // CSV headers - only what sales reps need
+    const headers = [
+      'Name',
+      'Email',
+      'Company',
+      'Score',
+      'Stage',
+      'Notes',
+      'Last Activity',
+      'Created Date'
+    ]
+
+    // Build each row
+    const rows = sortedLeads.map(lead => {
+      const lastActivity = getLastActivity(lead)
+      const lastActivityText = lastActivity 
+        ? `${getActivityShortDescription(lastActivity)} - ${formatTimeAgo(lastActivity.timestamp)}`
+        : 'No activity'
+      
+      return [
+        lead.name || '',
+        lead.email || '',
+        lead.company || '',
+        lead.score !== null ? lead.score.toString() : 'N/A',
+        lead.stage || '',
+        lead.notes || '',
+        lastActivityText,
+        new Date(lead.createdAt).toLocaleDateString()
+      ]
+    })
+
+    // Combine headers and rows
+    const csvContent = [
+      headers.join(','),
+      ...rows.map(row => row.map(cell => `"${String(cell).replace(/"/g, '""')}"`).join(','))
+    ].join('\n')
+
+    // Create blob and download
+    const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' })
+    const link = document.createElement('a')
+    const url = URL.createObjectURL(blob)
+    link.setAttribute('href', url)
+    link.setAttribute('download', `leads_export_${new Date().toISOString().split('T')[0]}.csv`)
+    link.style.visibility = 'hidden'
+    document.body.appendChild(link)
+    link.click()
+    document.body.removeChild(link)
   }
 
   return (
