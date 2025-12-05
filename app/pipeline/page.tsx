@@ -136,7 +136,7 @@ export default function PipelinePage() {
                       className="block p-4 bg-gray-50 rounded-lg border border-gray-200 hover:bg-gray-100 transition-colors"
                     >
                       <p className="text-base font-medium text-gray-900 mb-1">{lead.name}</p>
-                      <p className="text-sm text-gray-600 mb-2">{lead.email}</p>
+                      <p className="text-sm text-gray-600 mb-2">{lead.company}</p>
                       {lead.score !== null && (
                         <span
                           className={`inline-flex items-center px-2 py-1 rounded text-xs font-medium ${getScoreColor(lead.score)}`}
