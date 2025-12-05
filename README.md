@@ -1,4 +1,4 @@
-# Grok SDR Demo
+# Grok SDR - By: Owen Lin
 
 A production-ready Sales Development Representative system powered by Grok AI. Built to demonstrate how AI can enhance sales prospecting workflows through intelligent lead qualification, personalized outreach generation, and automated pipeline management.
 
@@ -7,6 +7,9 @@ A production-ready Sales Development Representative system powered by Grok AI. B
 Sales teams deal with dozens of leads daily. The challenge is knowing which ones deserve attention, what to say to them, and where they are in the sales process. This system addresses those questions by using Grok AI to evaluate leads consistently, generate personalized messages, and track progress through a visual pipeline.
 
 The interface is designed for sales professionals, not developers. Every screen prioritizes clarity and actionability over technical complexity.
+
+<img width="1099" height="785" alt="Screenshot 2025-12-04 at 6 21 53 PM" src="https://github.com/user-attachments/assets/c17bffe3-3f62-4ab7-a569-196671bc72ae" />
+GrokSDR home page
 
 ## Key Features
 
