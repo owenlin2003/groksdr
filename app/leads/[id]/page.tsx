@@ -36,6 +36,15 @@ export default function LeadDetailPage() {
 
   const [lead, setLead] = useState<Lead | null>(null)
   const [loading, setLoading] = useState(true)
+  const [cameFromPipeline, setCameFromPipeline] = useState(false)
+
+  useEffect(() => {
+    // Check if user came from pipeline page
+    if (typeof window !== 'undefined') {
+      const referrer = document.referrer
+      setCameFromPipeline(referrer.includes('/pipeline'))
+    }
+  }, [])
   const [qualifying, setQualifying] = useState(false)
   const [showQualifyModal, setShowQualifyModal] = useState(false)
   const [generatingMessage, setGeneratingMessage] = useState(false)
