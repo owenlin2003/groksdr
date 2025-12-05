@@ -38,6 +38,13 @@ export default function LeadDetailPage() {
   const [qualifying, setQualifying] = useState(false)
   const [generatingMessage, setGeneratingMessage] = useState(false)
   const [newStage, setNewStage] = useState('')
+  const [generatedMessage, setGeneratedMessage] = useState<{
+    subjectLine: string
+    emailBody: string
+    followUpSuggestions?: string[]
+    tone?: string
+  } | null>(null)
+  const [showMessageModal, setShowMessageModal] = useState(false)
 
   useEffect(() => {
     fetchLead()
@@ -90,7 +97,8 @@ export default function LeadDetailPage() {
       })
       const data = await response.json()
       if (data.success) {
-        alert(`Message Generated!\n\nSubject: ${data.data.outreach.subjectLine}\n\nBody:\n${data.data.outreach.emailBody}`)
+        setGeneratedMessage(data.data.outreach)
+        setShowMessageModal(true)
         await fetchLead()
       } else {
         alert(`Error: ${data.error}`)
@@ -274,6 +282,81 @@ export default function LeadDetailPage() {
           )}
         </div>
       </div>
+
+      {showMessageModal && generatedMessage && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
+          <div className="bg-white rounded-lg shadow-xl max-w-3xl w-full max-h-[90vh] overflow-hidden flex flex-col">
+            <div className="px-6 py-4 border-b border-gray-200 flex items-center justify-between">
+              <h2 className="text-2xl font-bold text-gray-900">Generated Outreach Message</h2>
+              <button
+                onClick={() => {
+                  setShowMessageModal(false)
+                  setGeneratedMessage(null)
+                }}
+                className="text-gray-400 hover:text-gray-600 text-2xl font-bold"
+              >
+                ×
+              </button>
+            </div>
+            <div className="px-6 py-5 overflow-y-auto flex-1">
+              <div className="mb-6">
+                <h3 className="text-base font-medium text-gray-500 mb-2">To:</h3>
+                <p className="text-base text-gray-900">{lead.email}</p>
+              </div>
+              <div className="mb-6">
+                <h3 className="text-base font-medium text-gray-500 mb-2">Subject:</h3>
+                <p className="text-base text-gray-900 font-medium">{generatedMessage.subjectLine}</p>
+              </div>
+              <div className="mb-6">
+                <h3 className="text-base font-medium text-gray-500 mb-2">Email Body:</h3>
+                <div className="bg-gray-50 rounded-md p-4 border border-gray-200">
+                  <p className="text-base text-gray-900 whitespace-pre-wrap">{generatedMessage.emailBody}</p>
+                </div>
+              </div>
+              {generatedMessage.tone && (
+                <div className="mb-6">
+                  <h3 className="text-base font-medium text-gray-500 mb-2">Tone:</h3>
+                  <span className="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-blue-100 text-blue-800">
+                    {generatedMessage.tone}
+                  </span>
+                </div>
+              )}
+              {generatedMessage.followUpSuggestions && generatedMessage.followUpSuggestions.length > 0 && (
+                <div className="mb-6">
+                  <h3 className="text-base font-medium text-gray-500 mb-2">Follow-up Suggestions:</h3>
+                  <ul className="list-disc list-inside space-y-1 text-base text-gray-700">
+                    {generatedMessage.followUpSuggestions.map((suggestion, idx) => (
+                      <li key={idx}>{suggestion}</li>
+                    ))}
+                  </ul>
+                </div>
+              )}
+            </div>
+            <div className="px-6 py-4 border-t border-gray-200 flex justify-end gap-3">
+              <button
+                onClick={() => {
+                  navigator.clipboard.writeText(
+                    `Subject: ${generatedMessage.subjectLine}\n\n${generatedMessage.emailBody}`
+                  )
+                  alert('Message copied to clipboard!')
+                }}
+                className="inline-flex items-center px-5 py-2 border border-gray-300 text-base font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50"
+              >
+                Copy to Clipboard
+              </button>
+              <button
+                onClick={() => {
+                  setShowMessageModal(false)
+                  setGeneratedMessage(null)
+                }}
+                className="inline-flex items-center px-5 py-2 border border-transparent text-base font-medium rounded-md text-white bg-blue-600 hover:bg-blue-700"
+              >
+                Close
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   )
 }
