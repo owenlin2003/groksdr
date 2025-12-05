@@ -81,6 +81,7 @@ export default function LeadsPage() {
       New: 'bg-blue-100 text-blue-800',
       Qualified: 'bg-purple-100 text-purple-800',
       Contacted: 'bg-yellow-100 text-yellow-800',
+      'Meeting Scheduled': 'bg-orange-100 text-orange-800',
       Closed: 'bg-green-100 text-green-800',
       Stale: 'bg-gray-100 text-gray-800',
     }
