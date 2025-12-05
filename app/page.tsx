@@ -1,18 +1,14 @@
 import Link from "next/link";
-import Image from "next/image";
 
 export default function Home() {
   return (
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
       <div className="text-center mb-16">
         <div className="flex justify-center mb-6">
-          <Image
+          <img
             src="/images.png"
             alt="Grok Logo"
-            width={120}
-            height={120}
-            className="object-contain"
-            priority
+            className="h-24 w-auto object-contain"
           />
         </div>
         <h1 className="text-4xl font-bold text-gray-900 sm:text-5xl mb-4">
