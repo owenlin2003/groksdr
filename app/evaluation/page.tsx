@@ -26,25 +26,6 @@ export default function EvaluationPage() {
   const [loading, setLoading] = useState(true)
   const [running, setRunning] = useState(false)
 
-  const getWinners = () => {
-    if (!metrics || metrics.models.length === 0) return null
-    
-    const fastest = metrics.models.reduce((prev, curr) => 
-      curr.averageResponseTime < prev.averageResponseTime ? curr : prev
-    )
-    const highestScore = metrics.models.reduce((prev, curr) => 
-      curr.averageScore > prev.averageScore ? curr : prev
-    )
-    const mostAccurate = metrics.models.reduce((prev, curr) => 
-      curr.accuracy > prev.accuracy ? curr : prev
-    )
-    const mostConsistent = metrics.models.reduce((prev, curr) => 
-      curr.scoreConsistency > prev.scoreConsistency ? curr : prev
-    )
-    
-    return { fastest, highestScore, mostAccurate, mostConsistent }
-  }
-
   useEffect(() => {
     fetchMetrics()
   }, [])
@@ -86,169 +67,208 @@ export default function EvaluationPage() {
     }
   }
 
+  const getBestModel = () => {
+    if (!metrics || metrics.models.length === 0) return null
+    
+    return metrics.models.reduce((best, current) => {
+      const currentScore = current.averageScore * 0.4 + current.accuracy * 0.3 + (100 - current.averageResponseTime / 10) * 0.3
+      const bestScore = best.averageScore * 0.4 + best.accuracy * 0.3 + (100 - best.averageResponseTime / 10) * 0.3
+      return currentScore > bestScore ? current : best
+    })
+  }
+
+  const formatModelName = (name: string) => {
+    return name.replace('grok-', 'Grok ').replace('-', ' ').replace(/\b\w/g, l => l.toUpperCase())
+  }
+
+  const getSpeedLabel = (ms: number) => {
+    if (ms < 2000) return { label: 'Very Fast', color: 'text-green-600' }
+    if (ms < 4000) return { label: 'Fast', color: 'text-green-500' }
+    if (ms < 6000) return { label: 'Moderate', color: 'text-yellow-600' }
+    return { label: 'Slow', color: 'text-red-600' }
+  }
+
+  const getScoreLabel = (score: number) => {
+    if (score >= 80) return { label: 'Excellent', color: 'text-green-600' }
+    if (score >= 60) return { label: 'Good', color: 'text-blue-600' }
+    if (score >= 40) return { label: 'Fair', color: 'text-yellow-600' }
+    return { label: 'Poor', color: 'text-red-600' }
+  }
+
   if (loading) {
     return (
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        <p className="text-gray-500 text-lg">Loading evaluation metrics...</p>
+        <p className="text-gray-500 text-lg">Loading results...</p>
       </div>
     )
   }
 
+  const bestModel = getBestModel()
+
   return (
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+      <div className="mb-8">
+        <h1 className="text-4xl font-bold text-gray-900 mb-2">AI Model Performance</h1>
+        <p className="text-lg text-gray-600">
+          Compare how different AI models perform at qualifying leads and generating messages
+        </p>
+      </div>
+
       <div className="mb-6 flex items-center justify-between">
-        <h1 className="text-4xl font-bold text-gray-900">Model Evaluation</h1>
+        <div className="text-base text-gray-600">
+          {metrics && metrics.models.length > 0 && (
+            <span>Testing {metrics.models.length} AI models</span>
+          )}
+        </div>
         <button
           onClick={handleRunEvaluation}
           disabled={running || loading}
-          className="inline-flex items-center px-5 py-3 border border-transparent text-base font-medium rounded-md text-white bg-blue-600 hover:bg-blue-700 disabled:opacity-50"
+          className="inline-flex items-center px-6 py-3 border border-transparent text-base font-medium rounded-md text-white bg-blue-600 hover:bg-blue-700 disabled:opacity-50"
         >
-          {running ? 'Running Evaluation...' : loading ? 'Loading...' : 'Run Evaluation'}
+          {running ? 'Testing Models...' : loading ? 'Loading...' : 'Test All Models'}
         </button>
       </div>
 
       {running && (
         <div className="mb-6 bg-blue-50 border border-blue-200 rounded-lg p-4">
           <p className="text-base text-blue-800">
-            Running evaluation across all models. This may take a few moments...
+            Testing all AI models with sample leads. This will take about 30 seconds...
           </p>
         </div>
       )}
 
-      {metrics && (() => {
-        const winners = getWinners()
-        return (
+      {metrics && metrics.models.length > 0 && (
         <>
-          <div className="mb-8 grid grid-cols-1 md:grid-cols-2 gap-4">
-            <div className="bg-white rounded-lg shadow p-6 border-2 border-transparent hover:border-blue-200 transition-colors">
-              <h3 className="text-base font-medium text-gray-500">Overall Average Response Time</h3>
-              <p className="mt-2 text-5xl font-bold text-gray-900">
-                {metrics.overallAverageResponseTime.toLocaleString()}ms
+          {bestModel && (
+            <div className="mb-8 bg-gradient-to-r from-green-50 to-blue-50 border-2 border-green-200 rounded-lg p-6">
+              <div className="flex items-center gap-3 mb-2">
+                <span className="text-2xl">🏆</span>
+                <h2 className="text-2xl font-bold text-gray-900">Recommended Model</h2>
+              </div>
+              <p className="text-xl font-semibold text-gray-800 mb-1">
+                {formatModelName(bestModel.modelVariant)}
               </p>
-              {winners && (
-                <p className="mt-2 text-sm text-gray-600">
-                  Fastest: <span className="font-semibold text-green-600">{winners.fastest.modelVariant}</span> ({winners.fastest.averageResponseTime.toLocaleString()}ms)
-                </p>
-              )}
+              <p className="text-base text-gray-600">
+                Best overall performance for lead qualification and message quality
+              </p>
             </div>
-            <div className="bg-white rounded-lg shadow p-6 border-2 border-transparent hover:border-blue-200 transition-colors">
-              <h3 className="text-base font-medium text-gray-500">Overall Accuracy</h3>
-              <p className="mt-2 text-5xl font-bold text-gray-900">
-                {metrics.overallAccuracy.toFixed(1)}%
-              </p>
-              <p className="mt-2 text-sm text-gray-600">
-                Percentage of scores within expected range for test leads
-              </p>
-              {winners && (
-                <p className="mt-1 text-sm text-gray-600">
-                  Best: <span className="font-semibold text-green-600">{winners.mostAccurate.modelVariant}</span> ({winners.mostAccurate.accuracy.toFixed(1)}%)
-                </p>
-              )}
-            </div>
+          )}
+
+          <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-8">
+            {metrics.models.map((model) => {
+              const isBest = bestModel?.modelVariant === model.modelVariant
+              const speed = getSpeedLabel(model.averageResponseTime)
+              const score = getScoreLabel(model.averageScore)
+              
+              return (
+                <div
+                  key={model.modelVariant}
+                  className={`bg-white rounded-lg shadow-lg p-6 border-2 ${
+                    isBest ? 'border-green-500' : 'border-gray-200'
+                  }`}
+                >
+                  {isBest && (
+                    <div className="mb-3">
+                      <span className="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-green-100 text-green-800">
+                        ⭐ Best Choice
+                      </span>
+                    </div>
+                  )}
+                  
+                  <h3 className="text-xl font-bold text-gray-900 mb-4">
+                    {formatModelName(model.modelVariant)}
+                  </h3>
+
+                  <div className="space-y-4">
+                    <div>
+                      <div className="flex justify-between items-center mb-1">
+                        <span className="text-sm text-gray-600">Lead Quality Score</span>
+                        <span className={`text-lg font-bold ${score.color}`}>
+                          {model.averageScore.toFixed(0)}/100
+                        </span>
+                      </div>
+                      <div className="w-full bg-gray-200 rounded-full h-2">
+                        <div
+                          className={`h-2 rounded-full ${
+                            model.averageScore >= 80 ? 'bg-green-500' :
+                            model.averageScore >= 60 ? 'bg-blue-500' :
+                            model.averageScore >= 40 ? 'bg-yellow-500' : 'bg-red-500'
+                          }`}
+                          style={{ width: `${model.averageScore}%` }}
+                        />
+                      </div>
+                      <p className="text-xs text-gray-500 mt-1">{score.label} lead scoring</p>
+                    </div>
+
+                    <div>
+                      <div className="flex justify-between items-center mb-1">
+                        <span className="text-sm text-gray-600">Response Speed</span>
+                        <span className={`text-base font-semibold ${speed.color}`}>
+                          {speed.label}
+                        </span>
+                      </div>
+                      <p className="text-xs text-gray-500">
+                        {(model.averageResponseTime / 1000).toFixed(1)} seconds average
+                      </p>
+                    </div>
+
+                    <div>
+                      <div className="flex justify-between items-center mb-1">
+                        <span className="text-sm text-gray-600">Reliability</span>
+                        <span className="text-base font-semibold text-gray-900">
+                          {model.accuracy.toFixed(0)}%
+                        </span>
+                      </div>
+                      <p className="text-xs text-gray-500">
+                        Consistent results across different leads
+                      </p>
+                    </div>
+
+                    <div className="pt-3 border-t border-gray-200">
+                      <p className="text-xs text-gray-500">
+                        Tested on {model.totalEvaluations} sample leads
+                      </p>
+                    </div>
+                  </div>
+                </div>
+              )
+            })}
           </div>
 
-          <div className="bg-white shadow rounded-lg overflow-hidden mb-8">
-            <div className="px-6 py-5 border-b border-gray-200">
-              <h2 className="text-xl font-medium text-gray-900">Model Comparison</h2>
-            </div>
-            <div className="overflow-x-auto">
-              <table className="min-w-full divide-y divide-gray-200">
-                <thead className="bg-gray-50">
-                  <tr>
-                    <th className="px-6 py-4 text-left text-sm font-medium text-gray-500 uppercase tracking-wider">
-                      Model
-                    </th>
-                    <th className="px-6 py-4 text-left text-sm font-medium text-gray-500 uppercase tracking-wider">
-                      Avg Response Time
-                    </th>
-                    <th className="px-6 py-4 text-left text-sm font-medium text-gray-500 uppercase tracking-wider">
-                      Avg Score
-                    </th>
-                    <th className="px-6 py-4 text-left text-sm font-medium text-gray-500 uppercase tracking-wider">
-                      Consistency
-                    </th>
-                    <th className="px-6 py-4 text-left text-sm font-medium text-gray-500 uppercase tracking-wider">
-                      Accuracy
-                    </th>
-                    <th className="px-6 py-4 text-left text-sm font-medium text-gray-500 uppercase tracking-wider">
-                      Success Rate
-                    </th>
-                  </tr>
-                </thead>
-                <tbody className="bg-white divide-y divide-gray-200">
-                  {metrics.models.map((model) => {
-                    const winners = getWinners()
-                    const isFastest = winners?.fastest.modelVariant === model.modelVariant
-                    const isHighestScore = winners?.highestScore.modelVariant === model.modelVariant
-                    const isMostAccurate = winners?.mostAccurate.modelVariant === model.modelVariant
-                    const isMostConsistent = winners?.mostConsistent.modelVariant === model.modelVariant
-                    const hasWinner = isFastest || isHighestScore || isMostAccurate || isMostConsistent
-                    
-                    return (
-                      <tr 
-                        key={model.modelVariant}
-                        className={hasWinner ? 'bg-green-50 border-l-4 border-l-green-500' : ''}
-                      >
-                        <td className="px-6 py-4 whitespace-nowrap">
-                          <div className="flex items-center gap-2">
-                            <span className="text-base font-medium text-gray-900">{model.modelVariant}</span>
-                            {hasWinner && (
-                              <span className="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-green-100 text-green-800">
-                                Winner
-                              </span>
-                            )}
-                          </div>
-                        </td>
-                        <td className="px-6 py-4 whitespace-nowrap">
-                          <div className="flex items-center gap-2">
-                            <span className={`text-lg font-semibold ${isFastest ? 'text-green-600' : 'text-gray-900'}`}>
-                              {model.averageResponseTime.toLocaleString()}ms
-                            </span>
-                            {isFastest && <span className="text-xs text-green-600 font-medium">Fastest</span>}
-                          </div>
-                        </td>
-                        <td className="px-6 py-4 whitespace-nowrap">
-                          <div className="flex items-center gap-2">
-                            <span className={`text-lg font-semibold ${isHighestScore ? 'text-green-600' : 'text-gray-900'}`}>
-                              {model.averageScore.toFixed(1)}
-                            </span>
-                            {isHighestScore && <span className="text-xs text-green-600 font-medium">Highest</span>}
-                          </div>
-                        </td>
-                        <td className="px-6 py-4 whitespace-nowrap">
-                          <div className="flex items-center gap-2">
-                            <span className={`text-lg font-semibold ${isMostConsistent ? 'text-green-600' : 'text-gray-900'}`}>
-                              {model.scoreConsistency.toFixed(1)}%
-                            </span>
-                            {isMostConsistent && <span className="text-xs text-green-600 font-medium">Most Consistent</span>}
-                          </div>
-                        </td>
-                        <td className="px-6 py-4 whitespace-nowrap">
-                          <div className="flex items-center gap-2">
-                            <span className={`text-lg font-semibold ${isMostAccurate ? 'text-green-600' : 'text-gray-900'}`}>
-                              {model.accuracy.toFixed(1)}%
-                            </span>
-                            {isMostAccurate && <span className="text-xs text-green-600 font-medium">Most Accurate</span>}
-                          </div>
-                        </td>
-                        <td className="px-6 py-4 whitespace-nowrap text-base text-gray-500">
-                          {model.totalEvaluations > 0
-                            ? ((model.successfulEvaluations / model.totalEvaluations) * 100).toFixed(1)
-                            : 0}
-                          %
-                        </td>
-                      </tr>
-                    )
-                  })}
-                </tbody>
-              </table>
+          <div className="bg-gray-50 rounded-lg p-6 mb-8">
+            <h3 className="text-lg font-semibold text-gray-900 mb-3">What These Results Mean</h3>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm text-gray-700">
+              <div>
+                <p className="font-medium mb-1">Lead Quality Score</p>
+                <p className="text-gray-600">
+                  How well the AI identifies promising leads. Higher scores mean better lead detection.
+                </p>
+              </div>
+              <div>
+                <p className="font-medium mb-1">Response Speed</p>
+                <p className="text-gray-600">
+                  How quickly the AI analyzes and scores leads. Faster means less waiting time.
+                </p>
+              </div>
+              <div>
+                <p className="font-medium mb-1">Reliability</p>
+                <p className="text-gray-600">
+                  How consistent the AI is. Higher reliability means more predictable results.
+                </p>
+              </div>
+              <div>
+                <p className="font-medium mb-1">Best Choice</p>
+                <p className="text-gray-600">
+                  The recommended model balances speed, accuracy, and reliability for your sales team.
+                </p>
+              </div>
             </div>
           </div>
 
           {metrics.recommendations.length > 0 && (
             <div className="bg-blue-50 border border-blue-200 rounded-lg p-6">
-              <h3 className="text-xl font-semibold text-blue-900 mb-4">
-                Recommendations
+              <h3 className="text-lg font-semibold text-blue-900 mb-3">
+                Tips for Better Results
               </h3>
               <ul className="list-disc list-inside space-y-2 text-base text-blue-800">
                 {metrics.recommendations.map((rec, idx) => (
@@ -258,8 +278,22 @@ export default function EvaluationPage() {
             </div>
           )}
         </>
-        )
-      })()}
+      )}
+
+      {metrics && metrics.models.length === 0 && (
+        <div className="bg-white rounded-lg shadow p-8 text-center">
+          <p className="text-lg text-gray-600 mb-4">
+            No evaluation results yet. Click "Test All Models" to compare AI performance.
+          </p>
+          <button
+            onClick={handleRunEvaluation}
+            disabled={running}
+            className="inline-flex items-center px-6 py-3 border border-transparent text-base font-medium rounded-md text-white bg-blue-600 hover:bg-blue-700 disabled:opacity-50"
+          >
+            {running ? 'Testing...' : 'Test All Models'}
+          </button>
+        </div>
+      )}
     </div>
   )
 }
