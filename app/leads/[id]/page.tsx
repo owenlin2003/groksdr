@@ -168,7 +168,7 @@ export default function LeadDetailPage() {
       <div className="mb-6">
         <Link
           href="/leads"
-          className="text-blue-600 hover:text-blue-800 text-sm font-medium"
+          className="text-blue-600 hover:text-blue-800 text-base font-medium"
         >
           ← Back to Leads
         </Link>
@@ -178,19 +178,19 @@ export default function LeadDetailPage() {
         <div className="px-6 py-5 border-b border-gray-200">
           <div className="flex items-center justify-between">
             <div>
-              <h1 className="text-2xl font-bold text-gray-900">{lead.name}</h1>
-              <p className="mt-1 text-sm text-gray-500">{lead.company}</p>
+              <h1 className="text-3xl font-bold text-gray-900">{lead.name}</h1>
+              <p className="mt-1 text-base text-gray-500">{lead.company}</p>
             </div>
             <div className="flex gap-2">
               {lead.score !== null && (
                 <span
-                  className={`inline-flex items-center px-3 py-1 rounded-full text-sm font-medium ${getScoreColor(lead.score)}`}
+                  className={`inline-flex items-center px-4 py-2 rounded-full text-base font-medium ${getScoreColor(lead.score)}`}
                 >
                   Score: {lead.score}
                 </span>
               )}
               <span
-                className={`inline-flex items-center px-3 py-1 rounded-full text-sm font-medium ${getStageColor(lead.stage)}`}
+                className={`inline-flex items-center px-4 py-2 rounded-full text-base font-medium ${getStageColor(lead.stage)}`}
               >
                 {lead.stage}
               </span>
@@ -201,37 +201,37 @@ export default function LeadDetailPage() {
         <div className="px-6 py-5">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
             <div>
-              <h3 className="text-sm font-medium text-gray-500">Email</h3>
-              <p className="mt-1 text-sm text-gray-900">{lead.email}</p>
+              <h3 className="text-base font-medium text-gray-500">Email</h3>
+              <p className="mt-1 text-base text-gray-900">{lead.email}</p>
             </div>
             <div>
-              <h3 className="text-sm font-medium text-gray-500">Created</h3>
-              <p className="mt-1 text-sm text-gray-900">
+              <h3 className="text-base font-medium text-gray-500">Created</h3>
+              <p className="mt-1 text-base text-gray-900">
                 {new Date(lead.createdAt).toLocaleDateString()}
               </p>
             </div>
             {lead.notes && (
               <div className="md:col-span-2">
-                <h3 className="text-sm font-medium text-gray-500">Notes</h3>
-                <p className="mt-1 text-sm text-gray-900">{lead.notes}</p>
+                <h3 className="text-base font-medium text-gray-500">Notes</h3>
+                <p className="mt-1 text-base text-gray-900">{lead.notes}</p>
               </div>
             )}
           </div>
 
           <div className="border-t border-gray-200 pt-6">
-            <h3 className="text-lg font-medium text-gray-900 mb-4">Actions</h3>
+            <h3 className="text-xl font-medium text-gray-900 mb-4">Actions</h3>
             <div className="flex flex-wrap gap-3">
               <button
                 onClick={handleQualify}
                 disabled={qualifying}
-                className="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md text-white bg-blue-600 hover:bg-blue-700 disabled:opacity-50"
+                className="inline-flex items-center px-5 py-3 border border-transparent text-base font-medium rounded-md text-white bg-blue-600 hover:bg-blue-700 disabled:opacity-50"
               >
                 {qualifying ? 'Qualifying...' : 'Qualify Lead'}
               </button>
               <button
                 onClick={handleGenerateMessage}
                 disabled={generatingMessage}
-                className="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md text-white bg-green-600 hover:bg-green-700 disabled:opacity-50"
+                className="inline-flex items-center px-5 py-3 border border-transparent text-base font-medium rounded-md text-white bg-green-600 hover:bg-green-700 disabled:opacity-50"
               >
                 {generatingMessage ? 'Generating...' : 'Generate Message'}
               </button>
@@ -239,7 +239,7 @@ export default function LeadDetailPage() {
                 <select
                   value={newStage}
                   onChange={(e) => setNewStage(e.target.value)}
-                  className="block rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm px-4 py-2 border"
+                  className="block rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 text-base px-4 py-3 border"
                 >
                   <option value="">Change Stage</option>
                   <option value="New">New</option>
@@ -252,7 +252,7 @@ export default function LeadDetailPage() {
                 <button
                   onClick={handleStageChange}
                   disabled={!newStage}
-                  className="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md text-white bg-purple-600 hover:bg-purple-700 disabled:opacity-50"
+                  className="inline-flex items-center px-5 py-3 border border-transparent text-base font-medium rounded-md text-white bg-purple-600 hover:bg-purple-700 disabled:opacity-50"
                 >
                   Update Stage
                 </button>
@@ -264,13 +264,13 @@ export default function LeadDetailPage() {
 
       <div className="mt-8 bg-white shadow rounded-lg overflow-hidden">
         <div className="px-6 py-5 border-b border-gray-200">
-          <h2 className="text-lg font-medium text-gray-900">Activity Timeline</h2>
+          <h2 className="text-xl font-medium text-gray-900">Activity Timeline</h2>
         </div>
         <div className="px-6 py-5">
           {lead.activities.length > 0 ? (
             <ActivityTimeline activities={lead.activities} />
           ) : (
-            <p className="text-gray-500 text-sm">No activities yet</p>
+            <p className="text-gray-500 text-base">No activities yet</p>
           )}
         </div>
       </div>

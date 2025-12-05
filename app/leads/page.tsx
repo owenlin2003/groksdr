@@ -90,10 +90,10 @@ export default function LeadsPage() {
   return (
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
       <div className="mb-6 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
-        <h1 className="text-3xl font-bold text-gray-900">Leads</h1>
+        <h1 className="text-4xl font-bold text-gray-900">Leads</h1>
         <Link
           href="/leads/new"
-          className="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-blue-600 hover:bg-blue-700"
+          className="inline-flex items-center px-5 py-3 border border-transparent text-base font-medium rounded-md shadow-sm text-white bg-blue-600 hover:bg-blue-700"
         >
           New Lead
         </Link>
@@ -107,11 +107,11 @@ export default function LeadsPage() {
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
             onKeyPress={(e) => e.key === 'Enter' && handleSearch()}
-            className="flex-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm px-4 py-2 border"
+            className="flex-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 text-base px-5 py-3 border"
           />
           <button
             onClick={handleSearch}
-            className="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md text-white bg-blue-600 hover:bg-blue-700"
+            className="inline-flex items-center px-5 py-3 border border-transparent text-base font-medium rounded-md text-white bg-blue-600 hover:bg-blue-700"
           >
             Search
           </button>
@@ -119,7 +119,7 @@ export default function LeadsPage() {
         <select
           value={filterStage}
           onChange={(e) => setFilterStage(e.target.value)}
-          className="block rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm px-4 py-2 border"
+          className="block rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 text-base px-5 py-3 border"
         >
           <option value="">All Stages</option>
           <option value="New">New</option>
@@ -133,11 +133,11 @@ export default function LeadsPage() {
 
       {loading ? (
         <div className="text-center py-12">
-          <p className="text-gray-500">Loading leads...</p>
+          <p className="text-gray-500 text-lg">Loading leads...</p>
         </div>
       ) : leads.length === 0 ? (
         <div className="text-center py-12">
-          <p className="text-gray-500">No leads found</p>
+          <p className="text-gray-500 text-lg">No leads found</p>
         </div>
       ) : (
         <div className="bg-white shadow overflow-hidden sm:rounded-md">
@@ -146,36 +146,36 @@ export default function LeadsPage() {
               <li key={lead.id}>
                 <Link
                   href={`/leads/${lead.id}`}
-                  className="block hover:bg-gray-50 px-4 py-4 sm:px-6"
+                  className="block hover:bg-gray-50 px-5 py-5 sm:px-6"
                 >
                   <div className="flex items-center justify-between">
                     <div className="flex-1 min-w-0">
                       <div className="flex items-center justify-between">
-                        <p className="text-sm font-medium text-blue-600 truncate">
+                        <p className="text-base font-medium text-blue-600 truncate">
                           {lead.name}
                         </p>
                         <div className="ml-2 flex-shrink-0 flex gap-2">
                           {lead.score !== null && (
                             <span
-                              className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${getScoreColor(lead.score)}`}
+                              className={`inline-flex items-center px-3 py-1 rounded-full text-sm font-medium ${getScoreColor(lead.score)}`}
                             >
                               Score: {lead.score}
                             </span>
                           )}
                           <span
-                            className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${getStageColor(lead.stage)}`}
+                            className={`inline-flex items-center px-3 py-1 rounded-full text-sm font-medium ${getStageColor(lead.stage)}`}
                           >
                             {lead.stage}
                           </span>
                         </div>
                       </div>
-                      <div className="mt-2 flex items-center text-sm text-gray-500">
+                      <div className="mt-2 flex items-center text-base text-gray-500">
                         <p className="truncate">{lead.company}</p>
                         <span className="mx-2">•</span>
                         <p>{lead.email}</p>
                       </div>
                       {lead.notes && (
-                        <p className="mt-1 text-sm text-gray-500 truncate">
+                        <p className="mt-1 text-base text-gray-500 truncate">
                           {lead.notes}
                         </p>
                       )}

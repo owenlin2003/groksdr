@@ -59,7 +59,7 @@ export default function ActivityTimeline({ activities }: ActivityTimelineProps) 
               <div className="relative flex space-x-3">
                 <div>
                   <span
-                    className={`h-8 w-8 rounded-full flex items-center justify-center ring-8 ring-white ${getActivityColor(activity.type)}`}
+                    className={`h-10 w-10 rounded-full flex items-center justify-center ring-8 ring-white text-lg ${getActivityColor(activity.type)}`}
                   >
                     {getActivityIcon(activity.type)}
                   </span>
@@ -67,29 +67,29 @@ export default function ActivityTimeline({ activities }: ActivityTimelineProps) 
                 <div className="min-w-0 flex-1 pt-1.5 flex justify-between space-x-4">
                   <div className="flex-1">
                     <div className="flex items-center gap-2">
-                      <p className="text-sm font-medium text-gray-900">
+                      <p className="text-base font-medium text-gray-900">
                         {activity.description}
                       </p>
                       <span
-                        className={`inline-flex items-center px-2 py-0.5 rounded text-xs font-medium ${getActivityColor(activity.type)}`}
+                        className={`inline-flex items-center px-3 py-1 rounded text-sm font-medium ${getActivityColor(activity.type)}`}
                       >
                         {activity.type}
                       </span>
                       {activity.modelUsed && (
-                        <span className="text-xs text-gray-500">
+                        <span className="text-sm text-gray-500">
                           ({activity.modelUsed})
                         </span>
                       )}
                     </div>
-                    <p className="mt-1 text-sm text-gray-500">
+                    <p className="mt-1 text-base text-gray-500">
                       {formatDate(activity.timestamp)}
                     </p>
                     {activity.grokResponse && (
                       <details className="mt-2">
-                        <summary className="text-sm text-blue-600 cursor-pointer hover:text-blue-800">
+                        <summary className="text-base text-blue-600 cursor-pointer hover:text-blue-800">
                           View Grok Response
                         </summary>
-                        <div className="mt-2 p-3 bg-gray-50 rounded text-xs">
+                        <div className="mt-2 p-4 bg-gray-50 rounded text-sm">
                           <pre className="whitespace-pre-wrap">
                             {JSON.stringify(JSON.parse(activity.grokResponse), null, 2)}
                           </pre>
@@ -98,10 +98,10 @@ export default function ActivityTimeline({ activities }: ActivityTimelineProps) 
                     )}
                     {activity.input && (
                       <details className="mt-2">
-                        <summary className="text-sm text-gray-600 cursor-pointer hover:text-gray-800">
+                        <summary className="text-base text-gray-600 cursor-pointer hover:text-gray-800">
                           View Input
                         </summary>
-                        <div className="mt-2 p-3 bg-gray-50 rounded text-xs">
+                        <div className="mt-2 p-4 bg-gray-50 rounded text-sm">
                           <pre className="whitespace-pre-wrap">
                             {JSON.stringify(JSON.parse(activity.input), null, 2)}
                           </pre>
@@ -110,10 +110,10 @@ export default function ActivityTimeline({ activities }: ActivityTimelineProps) 
                     )}
                     {activity.output && (
                       <details className="mt-2">
-                        <summary className="text-sm text-gray-600 cursor-pointer hover:text-gray-800">
+                        <summary className="text-base text-gray-600 cursor-pointer hover:text-gray-800">
                           View Output
                         </summary>
-                        <div className="mt-2 p-3 bg-gray-50 rounded text-xs">
+                        <div className="mt-2 p-4 bg-gray-50 rounded text-sm">
                           <pre className="whitespace-pre-wrap">
                             {JSON.stringify(JSON.parse(activity.output), null, 2)}
                           </pre>

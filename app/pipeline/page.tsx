@@ -66,14 +66,14 @@ export default function PipelinePage() {
   if (loading) {
     return (
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        <p className="text-gray-500">Loading pipeline...</p>
+        <p className="text-gray-500 text-lg">Loading pipeline...</p>
       </div>
     )
   }
 
   return (
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-      <h1 className="text-3xl font-bold text-gray-900 mb-6">Pipeline</h1>
+      <h1 className="text-4xl font-bold text-gray-900 mb-6">Pipeline</h1>
 
       <div className="overflow-x-auto">
         <div className="inline-flex gap-4 min-w-full">
@@ -85,14 +85,14 @@ export default function PipelinePage() {
                 className="flex-shrink-0 w-80 bg-gray-50 rounded-lg p-4"
               >
                 <div className="mb-4">
-                  <h2 className="text-lg font-semibold text-gray-900">
+                  <h2 className="text-xl font-semibold text-gray-900">
                     {stage.name}
                   </h2>
-                  <p className="text-sm text-gray-500">
+                  <p className="text-base text-gray-500">
                     {stageLeads.length} {stageLeads.length === 1 ? 'lead' : 'leads'}
                   </p>
                   {stage.description && (
-                    <p className="text-xs text-gray-400 mt-1">{stage.description}</p>
+                    <p className="text-sm text-gray-400 mt-1">{stage.description}</p>
                   )}
                 </div>
 
@@ -101,13 +101,13 @@ export default function PipelinePage() {
                     <Link
                       key={lead.id}
                       href={`/leads/${lead.id}`}
-                      className="block p-3 bg-white rounded-lg shadow-sm hover:shadow-md transition-shadow"
+                      className="block p-4 bg-white rounded-lg shadow-sm hover:shadow-md transition-shadow"
                     >
-                      <p className="text-sm font-medium text-gray-900">{lead.name}</p>
-                      <p className="text-xs text-gray-500 mt-1">{lead.company}</p>
+                      <p className="text-base font-medium text-gray-900">{lead.name}</p>
+                      <p className="text-sm text-gray-500 mt-1">{lead.company}</p>
                       {lead.score !== null && (
                         <span
-                          className={`inline-flex items-center px-2 py-0.5 rounded text-xs font-medium mt-2 ${getScoreColor(lead.score)}`}
+                          className={`inline-flex items-center px-3 py-1 rounded text-sm font-medium mt-2 ${getScoreColor(lead.score)}`}
                         >
                           Score: {lead.score}
                         </span>
@@ -115,7 +115,7 @@ export default function PipelinePage() {
                     </Link>
                   ))}
                   {stageLeads.length === 0 && (
-                    <p className="text-sm text-gray-400 text-center py-4">
+                    <p className="text-base text-gray-400 text-center py-4">
                       No leads in this stage
                     </p>
                   )}
