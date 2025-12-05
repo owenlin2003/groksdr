@@ -24,7 +24,6 @@ export default function PipelinePage() {
   const [leads, setLeads] = useState<Lead[]>([])
   const [loading, setLoading] = useState(true)
   const [closedCollapsed, setClosedCollapsed] = useState(true)
-  const [staleCollapsed, setStaleCollapsed] = useState(true)
 
   useEffect(() => {
     fetchPipeline()
@@ -81,8 +80,7 @@ export default function PipelinePage() {
         {stages.map((stage) => {
           const stageLeads = getLeadsForStage(stage.name)
           const isClosed = stage.name === 'Closed'
-          const isStale = stage.name === 'Stale'
-          const isCollapsed = (isClosed && closedCollapsed) || (isStale && staleCollapsed)
+          const isCollapsed = isClosed && closedCollapsed
           
           return (
             <div
@@ -95,20 +93,14 @@ export default function PipelinePage() {
                     <h2 className="text-xl font-semibold text-gray-900">
                       {stage.name}
                     </h2>
-                    {(isClosed || isStale) && (
+                    {isClosed && (
                       <button
-                        onClick={() => {
-                          if (isClosed) {
-                            setClosedCollapsed(!closedCollapsed)
-                          } else if (isStale) {
-                            setStaleCollapsed(!staleCollapsed)
-                          }
-                        }}
+                        onClick={() => setClosedCollapsed(!closedCollapsed)}
                         className="text-gray-400 hover:text-gray-600 transition-colors"
-                        title={isCollapsed ? 'Expand' : 'Collapse'}
+                        title={closedCollapsed ? 'Expand' : 'Collapse'}
                       >
                         <svg
-                          className={`w-5 h-5 transition-transform ${isCollapsed ? '' : 'rotate-180'}`}
+                          className={`w-5 h-5 transition-transform ${closedCollapsed ? '' : 'rotate-180'}`}
                           fill="none"
                           stroke="currentColor"
                           viewBox="0 0 24 24"

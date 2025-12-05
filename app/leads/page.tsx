@@ -334,7 +334,6 @@ export default function LeadsPage() {
           <option value="Contacted">Contacted</option>
           <option value="Meeting Scheduled">Meeting Scheduled</option>
           <option value="Closed">Closed</option>
-          <option value="Stale">Stale</option>
         </select>
         <select
           value={sortBy}
