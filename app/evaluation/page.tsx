@@ -49,13 +49,13 @@ export default function EvaluationPage() {
   const handleRunEvaluation = async () => {
     try {
       setRunning(true)
-      setStatusMessage('Starting evaluation... This will test 3 AI models with 10 sample leads (about 1-2 minutes)')
+      setStatusMessage('Starting evaluation... This will test 3 AI models with 3 sample leads (about 10-15 seconds)')
       
       // Use AbortController for timeout handling
       const controller = new AbortController()
       const timeoutId = setTimeout(() => {
         controller.abort()
-      }, 180000) // 3 minute timeout
+      }, 30000) // 30 second timeout for demo
       
       const response = await fetch('/api/evaluation', {
         method: 'POST',
@@ -173,7 +173,7 @@ export default function EvaluationPage() {
                   ? 'text-red-800'
                   : 'text-green-800'
               }`}>
-                {statusMessage || 'Testing all AI models with sample leads. This will take about 1-2 minutes...'}
+                {statusMessage || 'Testing all AI models with sample leads. This will take about 10-15 seconds...'}
               </p>
               {running && (
                 <p className="text-sm text-blue-600 mt-2">

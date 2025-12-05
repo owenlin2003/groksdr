@@ -73,12 +73,14 @@ async function evaluateLead(
 
 /**
  * Run full evaluation across all leads and model variants
+ * Uses a smaller demo dataset (3 leads) for faster execution
  */
 export async function runEvaluation(
   saveToDatabase: boolean = true
 ): Promise<EvaluationRun> {
   const allResults: EvaluationResult[] = []
-  const dataset = evaluationDataset
+  // Use first 3 leads for demo (high-value, low-fit, ambiguous) - completes in ~10-15 seconds
+  const dataset = evaluationDataset.slice(0, 3)
 
   // Run evaluation for each lead
   for (let i = 0; i < dataset.length; i++) {
