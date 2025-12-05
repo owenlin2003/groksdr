@@ -89,8 +89,8 @@ export default function ActivityTimeline({ activities }: ActivityTimelineProps) 
                         const response = JSON.parse(activity.grokResponse)
                         return (
                           <details className="mt-3">
-                            <summary className="text-base text-blue-600 cursor-pointer hover:text-blue-800 font-medium">
-                              ▼ View Grok Response
+                            <summary className="text-sm text-blue-600 cursor-pointer hover:text-blue-800 font-medium">
+                              View Grok Response
                             </summary>
                             <div className="mt-3 p-4 bg-blue-50 rounded-lg border border-blue-200">
                               <div className="grid grid-cols-2 gap-4 mb-4 pb-4 border-b border-blue-200">
@@ -103,7 +103,7 @@ export default function ActivityTimeline({ activities }: ActivityTimelineProps) 
                                 {response.score !== undefined && (
                                   <div>
                                     <span className="text-xs font-semibold text-blue-700 uppercase tracking-wide">Score</span>
-                                    <div className="text-2xl font-bold text-blue-900 mt-1">{response.score}/100</div>
+                                    <div className="text-lg font-bold text-blue-900 mt-1">{response.score}/100</div>
                                   </div>
                                 )}
                                 {response.qualificationStatus && (
@@ -116,7 +116,7 @@ export default function ActivityTimeline({ activities }: ActivityTimelineProps) 
                               {response.reasoning && (
                                 <div>
                                   <div className="text-sm font-semibold text-blue-900 mb-2">Reasoning:</div>
-                                  <div className="text-base text-blue-800 whitespace-pre-wrap leading-relaxed bg-white p-3 rounded border border-blue-100">
+                                  <div className="text-sm text-blue-800 whitespace-pre-wrap leading-relaxed bg-white p-3 rounded border border-blue-100">
                                     {response.reasoning}
                                   </div>
                                 </div>
