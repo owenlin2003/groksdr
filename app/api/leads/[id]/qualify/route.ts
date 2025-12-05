@@ -84,7 +84,7 @@ export async function POST(
 
     // Build description with custom criteria mention if used
     const criteriaNote = criteria && scoringCriteria 
-      ? ` (using custom criteria: Company Size ${criteria.companySizeWeight}/5, Budget ${criteria.budgetSignalsWeight}/5, Decision Maker ${criteria.decisionMakerWeight}/5, Industry ${criteria.industryMatchWeight}/5)`
+      ? ` (using custom criteria: Company Size ${Math.round(criteria.companySizeWeight * 5)}/5, Budget ${Math.round(criteria.budgetSignalsWeight * 5)}/5, Decision Maker ${Math.round(criteria.decisionMakerWeight * 5)}/5, Industry ${Math.round(criteria.industryMatchWeight * 5)}/5)`
       : ''
     
     // Log activity with full details
