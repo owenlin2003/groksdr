@@ -41,7 +41,7 @@ export default function RootLayout({
                         className="h-10 w-auto object-contain"
                       />
                       <span className="text-3xl font-bold text-gray-900">
-                        Grok SDR Demo
+                        SDR Demo
                       </span>
                     </Link>
                   </div>
