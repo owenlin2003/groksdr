@@ -12,7 +12,11 @@ interface Lead {
   stage: string
   notes: string | null
   createdAt: string
-  activities: Array<{ timestamp: string }>
+  activities: Array<{ 
+    timestamp: string
+    type: string
+    description: string
+  }>
 }
 
 export default function LeadsPage() {
@@ -121,6 +125,98 @@ export default function LeadsPage() {
 
   const sortedLeads = sortLeads(leads)
 
+  const formatTimeAgo = (timestamp: string) => {
+    const now = new Date()
+    const time = new Date(timestamp)
+    const diffMs = now.getTime() - time.getTime()
+    const diffMins = Math.floor(diffMs / 60000)
+    const diffHours = Math.floor(diffMs / 3600000)
+    const diffDays = Math.floor(diffMs / 86400000)
+
+    if (diffMins < 1) return 'just now'
+    if (diffMins < 60) return `${diffMins} minute${diffMins === 1 ? '' : 's'} ago`
+    if (diffHours < 24) return `${diffHours} hour${diffHours === 1 ? '' : 's'} ago`
+    if (diffDays < 7) return `${diffDays} day${diffDays === 1 ? '' : 's'} ago`
+    return time.toLocaleDateString()
+  }
+
+  const getActivityIcon = (type: string) => {
+    const icons: Record<string, string> = {
+      qualification: '✓',
+      message: '📧',
+      stage_change: '→',
+      score_update: '📊',
+      note: '📝',
+    }
+    return icons[type] || '•'
+  }
+
+  const getActivityShortDescription = (activity: { type: string; description: string }) => {
+    const typeLabels: Record<string, string> = {
+      qualification: 'Qualified',
+      message: 'Message generated',
+      stage_change: 'Stage changed',
+      score_update: 'Score updated',
+      note: 'Note added',
+    }
+    return typeLabels[activity.type] || activity.description.split(':')[0] || 'Activity'
+  }
+
+  const getLastActivity = (lead: Lead) => {
+    if (!lead.activities || lead.activities.length === 0) return null
+    return lead.activities[0] // Already sorted by timestamp desc
+  }
+
+  const getScoreTrend = (lead: Lead) => {
+    if (!lead.activities || lead.activities.length < 2) return null
+    const scoreActivities = lead.activities.filter(a => a.type === 'score_update' || a.type === 'qualification')
+    if (scoreActivities.length < 2) return null
+    
+    // Try to extract scores from descriptions
+    const scores = scoreActivities.map(a => {
+      const match = a.description.match(/score (\d+)/i)
+      return match ? parseInt(match[1]) : null
+    }).filter(s => s !== null) as number[]
+    
+    if (scores.length < 2) return null
+    const current = scores[0]
+    const previous = scores[scores.length - 1]
+    const diff = current - previous
+    
+    if (diff > 0) return { direction: 'up', value: diff }
+    if (diff < 0) return { direction: 'down', value: Math.abs(diff) }
+    return { direction: 'same', value: 0 }
+  }
+
+  const getNextAction = (lead: Lead) => {
+    const lastActivity = getLastActivity(lead)
+    const daysSinceActivity = lastActivity 
+      ? Math.floor((new Date().getTime() - new Date(lastActivity.timestamp).getTime()) / 86400000)
+      : Math.floor((new Date().getTime() - new Date(lead.createdAt).getTime()) / 86400000)
+
+    // No activity in 7+ days
+    if (daysSinceActivity >= 7) {
+      return { text: 'No activity in 7+ days - follow up', color: 'text-orange-600', icon: '⚠️' }
+    }
+
+    // High score but not qualified
+    if (lead.score !== null && lead.score >= 80 && lead.stage === 'New') {
+      return { text: 'Schedule demo call', color: 'text-blue-600', icon: '💡' }
+    }
+
+    // Qualified but not contacted
+    if (lead.stage === 'Qualified') {
+      return { text: 'Send outreach message', color: 'text-blue-600', icon: '💡' }
+    }
+
+    // Low score
+    if (lead.score !== null && lead.score < 50 && lead.stage !== 'Closed') {
+      return { text: 'Re-qualify or nurture', color: 'text-yellow-600', icon: '💡' }
+    }
+
+    return null
+  }
+
   return (
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
       <div className="mb-6 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
@@ -202,13 +298,22 @@ export default function LeadsPage() {
                           {lead.name}
                         </p>
                         <div className="ml-2 flex-shrink-0 flex gap-2">
-                          {lead.score !== null && (
-                            <span
-                              className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${getScoreColor(lead.score)}`}
-                            >
-                              Score: {lead.score}
-                            </span>
-                          )}
+                          {lead.score !== null && (() => {
+                            const trend = getScoreTrend(lead)
+                            return (
+                              <span
+                                className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${getScoreColor(lead.score)}`}
+                              >
+                                Score: {lead.score}
+                                {trend && trend.direction === 'up' && (
+                                  <span className="ml-1 text-green-600">↑ (+{trend.value})</span>
+                                )}
+                                {trend && trend.direction === 'down' && (
+                                  <span className="ml-1 text-red-600">↓ (-{trend.value})</span>
+                                )}
+                              </span>
+                            )
+                          })()}
                           <span
                             className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${getStageColor(lead.stage)}`}
                           >
@@ -221,6 +326,24 @@ export default function LeadsPage() {
                         <span className="mx-2">•</span>
                         <p>{lead.email}</p>
                       </div>
+                      {(() => {
+                        const lastActivity = getLastActivity(lead)
+                        const nextAction = getNextAction(lead)
+                        return (
+                          <>
+                            {lastActivity && (
+                              <div className="mt-1 text-xs text-gray-500">
+                                {getActivityIcon(lastActivity.type)} {getActivityShortDescription(lastActivity)} {formatTimeAgo(lastActivity.timestamp)}
+                              </div>
+                            )}
+                            {nextAction && (
+                              <div className={`mt-1 text-xs ${nextAction.color}`}>
+                                {nextAction.icon} Next: {nextAction.text}
+                              </div>
+                            )}
+                          </>
+                        )
+                      })()}
                       {lead.notes && (
                         <p className="mt-1 text-sm text-gray-500 truncate">
                           {lead.notes}
