@@ -42,19 +42,18 @@ export async function GET(request: NextRequest) {
     }
 
     // Build search conditions based on filter
+    // SQLite doesn't support 'insensitive' mode, so we'll filter in JavaScript
     const searchConditions: any[] = []
 
     // Always search name and email (most common searches)
     searchConditions.push({
       name: {
         contains: searchTerm,
-        mode: 'insensitive' as const,
       },
     })
     searchConditions.push({
       email: {
         contains: searchTerm,
-        mode: 'insensitive' as const,
       },
     })
 
@@ -62,7 +61,6 @@ export async function GET(request: NextRequest) {
       searchConditions.push({
         company: {
           contains: searchTerm,
-          mode: 'insensitive' as const,
         },
       })
     }
@@ -71,7 +69,6 @@ export async function GET(request: NextRequest) {
       searchConditions.push({
         notes: {
           contains: searchTerm,
-          mode: 'insensitive' as const,
         },
       })
     }
@@ -81,23 +78,10 @@ export async function GET(request: NextRequest) {
       where.OR = searchConditions
     }
 
-    // Get leads matching search
-    const leads = await prisma.lead.findMany({
-      where,
+    // Get leads matching search (case-insensitive filtering done in JS for SQLite)
+    const allLeads = await prisma.lead.findMany({
       include: {
         activities: {
-          where: filter === 'activity' || !filter || filter === 'all'
-            ? {
-                OR: [
-                  {
-                    description: {
-                      contains: searchTerm,
-                      mode: 'insensitive' as const,
-                    },
-                  },
-                ],
-              }
-            : undefined,
           take: 5,
           orderBy: { timestamp: 'desc' },
         },
@@ -105,10 +89,57 @@ export async function GET(request: NextRequest) {
       orderBy: { createdAt: 'desc' },
     })
 
+    // Apply case-insensitive search filter in JavaScript (SQLite compatibility)
+    let filteredLeads = allLeads.filter((lead) => {
+      // Apply stage filter if specified
+      if (stage && lead.stage !== stage) {
+        return false
+      }
+
+      // Apply score filters if specified
+      if (minScore && (lead.score === null || lead.score < parseInt(minScore))) {
+        return false
+      }
+      if (maxScore && (lead.score === null || lead.score > parseInt(maxScore))) {
+        return false
+      }
+
+      // Case-insensitive search across name, email, company, notes
+      const nameMatch = lead.name.toLowerCase().includes(searchTerm)
+      const emailMatch = lead.email.toLowerCase().includes(searchTerm)
+      const companyMatch = !filter || filter === 'all' || filter === 'company'
+        ? lead.company.toLowerCase().includes(searchTerm)
+        : false
+      const notesMatch = !filter || filter === 'all' || filter === 'notes'
+        ? (lead.notes?.toLowerCase().includes(searchTerm) || false)
+        : false
+
+      // Filter activities if activity filter is specified
+      if (filter === 'activity' || !filter || filter === 'all') {
+        const activityMatch = lead.activities.some((activity) =>
+          activity.description.toLowerCase().includes(searchTerm)
+        )
+        if (activityMatch) {
+          return true
+        }
+      }
+
+      return nameMatch || emailMatch || companyMatch || notesMatch
+    })
+
+    // Filter activities to only include matching ones if activity filter is specified
+    if (filter === 'activity' || !filter || filter === 'all') {
+      filteredLeads = filteredLeads.map((lead) => ({
+        ...lead,
+        activities: lead.activities.filter((activity) =>
+          activity.description.toLowerCase().includes(searchTerm)
+        ),
+      }))
+    }
+
     // Filter leads by activity if activity filter is specified
-    let filteredLeads = leads
     if (filter === 'activity') {
-      filteredLeads = leads.filter((lead) => lead.activities.length > 0)
+      filteredLeads = filteredLeads.filter((lead) => lead.activities.length > 0)
     }
 
     // Calculate relevance scores
