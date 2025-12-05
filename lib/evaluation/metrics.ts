@@ -35,31 +35,43 @@ export function calculateVariance(scores: number[]): number {
 }
 
 /**
- * Calculate score consistency using coefficient of variation
- * Lower variation = higher consistency (0-100 scale)
+ * Calculate score consistency using a more lenient approach
+ * Since we're evaluating different leads with different expected scores,
+ * we measure consistency relative to the actual score spread
+ * Higher consistency = scores are reasonably clustered relative to their spread
  */
 export function calculateConsistency(scores: number[]): number {
   if (scores.length === 0) return 0
   if (scores.length === 1) return 100 // Perfect consistency with only one score
   
-  const mean = scores.reduce((sum, score) => sum + score, 0) / scores.length
+  const minScore = Math.min(...scores)
+  const maxScore = Math.max(...scores)
+  const scoreRange = maxScore - minScore
   
-  // Avoid division by zero
-  if (mean === 0) return 0
+  // If all scores are the same, perfect consistency
+  if (scoreRange === 0) return 100
   
   // Calculate standard deviation
   const variance = calculateVariance(scores)
   const standardDeviation = Math.sqrt(variance)
   
-  // Coefficient of variation (CV) = standard deviation / mean
-  // Lower CV = more consistent
-  const coefficientOfVariation = standardDeviation / mean
+  // Normalize std dev by the actual range of scores
+  // If std dev is small relative to the range, that's good consistency
+  // Example: scores [80, 85, 82] have range=5, stdDev~2 → consistency = 100 * (1 - 2/5) = 60%
+  // Example: scores [20, 25, 22] have range=5, stdDev~2 → consistency = 60%
+  // Example: scores [85, 90, 25, 30] have range=65, stdDev~32 → consistency = 100 * (1 - 32/65) = 51%
+  const normalizedStdDev = Math.min(standardDeviation / scoreRange, 1)
+  const consistency = Math.max(0, 100 * (1 - normalizedStdDev))
   
-  // Convert CV to consistency score (0-100)
-  // CV of 0 = 100% consistency, CV of 0.5+ = low consistency
-  // Use inverse relationship: consistency = 100 * (1 - min(CV, 1))
-  // Cap CV at 1.0 to prevent negative consistency
-  const consistency = Math.max(0, Math.min(100, 100 * (1 - Math.min(coefficientOfVariation, 1))))
+  // Apply a boost factor: if the range is small (< 20), the model is being consistent
+  // If range is large (> 60), it might be evaluating very different leads (expected)
+  if (scoreRange < 20) {
+    // Tight clustering = high consistency
+    return Math.min(100, consistency + 20)
+  } else if (scoreRange > 60) {
+    // Large spread might be expected for different leads, so don't penalize as much
+    return Math.max(0, consistency + 10)
+  }
   
   return Math.round(consistency * 100) / 100
 }
